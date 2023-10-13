@@ -3,23 +3,25 @@
 
 # Columns (the more you add, the narrower they will be)
 columns:
-  - description:
-    links:
-    - text: Name of project partner 1
-      href: http://example.com
-      new_window: true
-    - text: Prestigious and long name of project partner 2
-      href: http://example.com
-      new_window: true
+  - description: >
+      This project is supported by the European Commission,
+      under the grant number: <br/>
+      <a target="_blank" href="https://cordis.europa.eu/project/id/101109243">
+        HORIZON-MSCA-2022-PF-01-101109243
+      </a>.
 
-  - description: > # E.g. funding acknowledgement. Can be Markdown
-      This project is made with ❤ for open source.
-      See [`_data/footer.yml`](https://raw.githubusercontent.com/peterdesmet/petridish/master/_data/footer.yml)
-      to customize this text.
+  - description: "Academic partners"
     links:
+    - text: University of Verona
+      href: http://www.di.univr.it
+      new_window: true
+    - text: University of North Carolina at Chapel Hill
+      href: https://www.unc.edu/
+      new_window: true
 
 # Small print license statement to add at the bottom of the footer. Can be Markdown
 # Will be prefixed by "© {{ site.author }}" if defined in _config.yml
 license: >
   Content on this site is licensed under a [CC BY 4.0 License](http://creativecommons.org/licenses/by/4.0/).
   \| Theme: [Petridish](https://github.com/peterdesmet/petridish)
+  \| <a href="https://www.freepik.com/free-vector/industry-4-0-banner-with-intelligence-technology-with-robotic-arm_13744596.htm">Banner image by jcomp</a> on Freepik

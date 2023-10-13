@@ -1,26 +1,70 @@
 # Project team members listed below will appear on the /team page
 
-- name: Philip J. Fry
-  role: Delivery boy # Will appear next to name
-  image: assets/theme/images/fry_ethan-hoover-311143-unsplash.jpg # Can be external link
-  description: > # Can be Markdown
-    Protagonist, from the 20th century. Many times great-uncle to Professor Hubert Farnsworth.
-  orcid: 0000-0000-0000-0000
-  researchgate: researchgate_username
-  googlescholar: googlescholar_username
-  twitter: twitter_username
-  mastodon: https://mastodon.social/@mastodon_username
-  github: github_username
-  email: name@example.com
-
-- name: Turanga Leela
-  role: Captain
+- name: Enrico Fraccaroli, Ph.D.
+  role: Marie Sklodowska-Curie Fellow
+  image: assets/bio/enrico.jpg
   description: >
-    Mutant cyclops. Leela is spaceship captain, pilot, and head of all 
-    aviation services on board the [Planet Express Ship](https://en.wikipedia.org/wiki/Planet_Express_Ship). 
+    Enrico Fraccaroli is a Marie Sklodowska Curie Fellow at the Department of
+    Engineering for Innovation Medicine, at the Unversity of Verona. He received
+    his Ph.D. degree in computer science from the University of Verona, Italy,
+    in May 2019.
+      {: .text-justify}
+    
+    His research interests are the development of new methodologies
+    for the efficient simulation and functional safety evaluation of embedded
+    platforms composed of analog, digital, and network components.
+      {: .text-justify}
+  web: https://www.dimi.univr.it/?ent=persona&id=22371
+  orcid: 0000-0002-9739-6501
+  researchgate: Enrico-Fraccaroli
+  googlescholar: J_1JzB4AAAAJ
+  twitter: https://twitter.com/Galfurian
+  github: https://github.com/Galfurian
+  email: enrico.fraccaroli@univr.it
 
-- name: Professor Hubert J. Farnsworth
-  role: CEO & Owner
-  image: assets/theme/images/farnsworth_angelo-abear-1662775-unsplash.jpg
+- name: Prof. Franco Fummi
+  role: Supervisor at the University of Verona 
+  image: assets/bio/franco.jpg
   description: >
-    Many times great-nephew of Fry. Tenured professor of [Mars University](https://en.wikipedia.org/wiki/Mars_University).
+    Prof. Fummi received the PhD degree in electronic engineering from
+    Politecnico di Milano, Milano, Italy, in 1995. Since 2000 he is a full
+    professor at the Department of Computer Science, University of Verona,
+    Italy, and where he is also the project manager of the <a target="_blank"
+    href="http://icelab.di.univr.it/"> Industrial Computer Engineering (ICE)
+    Laboratory</a>. Since 1995, he has been with the Department of Electronics
+    and Information, Politecnico di Milano, as an assistant professor. He is a
+    co-founder of EDALab, an EDA company developing tools for the design of
+    networked embedded systems.
+      {: .text-justify}
+
+    His current research interests include electronic design automation
+    methodologies for modeling, verification, testing, and optimization of
+    cyber-physical production systems.
+      {: .text-justify}
+  web: https://www.dimi.univr.it/?ent=persona&id=59
+  orcid: 0000-0002-4404-5791
+  researchgate: Franco-Fummi
+  googlescholar: nhZeZLQAAAAJ
+  email: franco.fummi@univr.it
+
+- name: Prof. Samarjit Chakraborty
+  role: Supervisor at the University of North Carolina at Chapel Hill
+  image: assets/bio/samarjit.jpg
+  description: >
+    Samarjit Chakraborty is a William R. Kenan, Jr. Distinguished Professor in
+    computer science at the University of North Carolina at Chapel Hill, USA.
+    From 2008 to 2019, he was a professor at TU Munich in Germany and an
+    assistant professor at the National University of Singapore from 2003 -
+    2008. He obtained his Ph.D. in electrical engineering from ETH Zurich in
+    2003.
+      {: .text-justify}
+    
+    His research interests include system-level design of embedded and
+    cyber-physical systems, with applications in automotive, healthcare and
+    sensor networks.
+      {: .text-justify}
+  web: https://www.cs.unc.edu/~samarjit/
+  orcid: 0000-0002-0503-6235
+  researchgate: Samarjit-Chakraborty
+  googlescholar: ez7zZa8AAAAJ
+  email: samarjit@cs.unc.edu
