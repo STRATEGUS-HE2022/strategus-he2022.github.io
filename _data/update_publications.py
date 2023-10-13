@@ -2,8 +2,8 @@ import bibtexparser
 from pylatexenc.latex2text import LatexNodes2Text
 import yaml
 
-input_path = "./_data/publications.bib"
-output_path = "./_data/publications.yml"
+input_path = "./publications.bib"
+output_path = "./publications.yml"
 
 with open(input_path) as input_file:
     lt = LatexNodes2Text()
