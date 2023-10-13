@@ -54,5 +54,10 @@
         </ul>
       </div>
     {% endif %}
+    <a class="navbar-brand d-flex align-items-center" href="{{'/' | relative_url }}">
+      {% if site.logo_extra %}
+        <img class="me-3" src="{{ site.logo_extra | relative_url }}">
+      {% endif %}
+    </a>
   </div>
 </nav>

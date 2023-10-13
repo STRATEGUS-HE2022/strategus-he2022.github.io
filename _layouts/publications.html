@@ -16,11 +16,11 @@ description: Template for publications page.
   <li>
     <div class="d-flex publication-entry">
       <div>
-        {{ if entry.ENTRYTYPE == 'inproceedings' }}
+        {% if entry.ENTRYTYPE == "inproceedings" %}
           {{ entry.author }} ({{ entry.year }}) <i>"{{ entry.title }}."</i>
           Proceedings of {{ entry.booktitle }}, {{ entry.pages }}.
           doi: <a href="http://dx.doi.org/{{ entry.doi }}">{{ entry.doi }}</a>
-        {{ endif }}
+        {% endif %}
       </div>
     </div>
   </li>

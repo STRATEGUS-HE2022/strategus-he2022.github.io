@@ -20,6 +20,7 @@ colors:
 font_serif: true # Font type for page content: serif (default) or slightly smaller sans-serif
 rounded_corners: true # Enable (default) rounded corners on boxes and buttons
 logo: /assets/theme/images/strategus_logo.jpg # Logo in navbar, will be displayed with 30px height
+logo_extra: /assets/theme/images/msca_ue_logo.jpg
 
 # BUILD SETTINGS
 markdown: kramdown
