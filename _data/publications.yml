@@ -1,6 +1,6 @@
 - ENTRYTYPE: inproceedings
   ID: '10218266'
-  author: Tosoni, Francesco and Dall’Ora, Nicola and Fraccaroli, Enrico and Vinco,
+  author: Tosoni, Francesco and Dall'Ora, Nicola and Fraccaroli, Enrico and Vinco,
     Sara and Fummi, Franco
   booktitle: 21st IEEE International Conference on Industrial Informatics (INDIN)
   doi: 10.1109/INDIN51400.2023.10218266
@@ -10,3 +10,18 @@
     Faulty Behaviors
   volume: ''
   year: '2023'
+- ENTRYTYPE: article
+  ID: '10368188'
+  author: Tosoni, Francesco and Dall'Ora, Nicola and Fraccaroli, Enrico and Vinco,
+    Sara and Fummi, Franco
+  doi: 10.1109/TC.2023.3345135
+  journal: IEEE Transactions on Computers
+  keywords: Circuit faults;Behavioral sciences;Mathematical models;Taxonomy;Safety;Standards;Europe;Cyber-physical
+    systems;smart systems;fault taxonomy;fault injection;electrical faults;mechanical
+    faults
+  number: '3'
+  pages: 829-841
+  title: Multidomain Fault Models Covering the Analog Side of a Smart or Cyber-Physical
+    System
+  volume: '73'
+  year: '2024'

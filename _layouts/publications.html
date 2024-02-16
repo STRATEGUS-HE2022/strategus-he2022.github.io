@@ -17,9 +17,22 @@ description: Template for publications page.
     <div class="d-flex publication-entry">
       <div>
         {% if entry.ENTRYTYPE == "inproceedings" %}
-          {{ entry.author }} ({{ entry.year }}) <i>"{{ entry.title }}."</i>
-          Proceedings of {{ entry.booktitle }}, {{ entry.pages }}.
-          doi: <a href="http://dx.doi.org/{{ entry.doi }}">{{ entry.doi }}</a>
+          {{ entry.author }}
+          <i>"{{ entry.title }},"</i>
+          in proceedings of {{ entry.booktitle }}, 
+          pp. {{ entry.pages }}, 
+          {{ entry.year }}, 
+          doi: <a href="http://dx.doi.org/{{ entry.doi }}">{{ entry.doi }}</a>.
+        {% endif %}
+        {% if entry.ENTRYTYPE == "article" %}
+          {{ entry.author }}
+          <i>"{{ entry.title }},"</i> 
+          in {{ entry.journal }}, 
+          vol. {{ entry.volume }}, 
+          no. {{ entry.number }}, 
+          pp. {{ entry.pages }}, 
+          {{ entry.year }}, 
+          doi: <a href="http://dx.doi.org/{{ entry.doi }}">{{ entry.doi }}</a>.
         {% endif %}
       </div>
     </div>
