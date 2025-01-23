@@ -1,5 +1,43 @@
 // Publication entry
 
+.publication-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.publication-list li {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1rem;
+}
+
 .publication-entry {
-  margin-bottom: $grid-gutter-width;
+  display: flex;
+  flex-direction: column;
+}
+
+.publication-type {
+  font-weight: bold;
+  color: #007BFF;
+  margin-bottom: 0.5rem;
+}
+
+.publication-title {
+  font-weight: bold;
+  font-style: italic;
+  margin: 0.5rem 0;
+}
+
+.publication-details {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.publication-doi a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.publication-doi a:hover {
+  text-decoration: underline;
 }

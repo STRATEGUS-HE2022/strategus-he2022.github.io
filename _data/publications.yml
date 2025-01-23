@@ -1,15 +1,126 @@
 - ENTRYTYPE: inproceedings
-  ID: '10218266'
+  ID: '10673865'
   author: Tosoni, Francesco and Dall'Ora, Nicola and Fraccaroli, Enrico and Vinco,
     Sara and Fummi, Franco
-  booktitle: 21st IEEE International Conference on Industrial Informatics (INDIN)
-  doi: 10.1109/INDIN51400.2023.10218266
+  booktitle: 2024 Forum on Specification     Design Languages (FDL)
+  doi: 10.1109/FDL63219.2024.10673865
+  keywords: Design automation;Microcontrollers;ISO Standards;Europe;Control systems;Robustness;Fourth
+    Industrial Revolution;Fault simulation;Design automation;Design robustness;Multi-domain
+    simulation
   number: ''
   pages: 1-8
-  title: Thermal Digital Twin of a Multi-Domain System for Discovering Mechanical
-    Faulty Behaviors
+  title: Cross-domain Analog Fault Injection for Designing Robust Smart Systems
+  url: https://iris.univr.it/retrieve/8c72de0b-470c-48f6-8640-084afcc509d1/OPEN__2024__FDL__Cross_domain_Analog_Fault_Injection_for_Designing_Robust_Smart_Systems.pdf
   volume: ''
-  year: '2023'
+  year: '2024'
+- ENTRYTYPE: inproceedings
+  ID: '10673841'
+  author: Tosoni, Francesco and Amin, Muhammad Ihtisham and Dall'Ora, Nicola and Fraccaroli,
+    Enrico and Fummi, Franco
+  booktitle: 2024 Forum on Specification     Design Languages (FDL)
+  doi: 10.1109/FDL63219.2024.10673841
+  keywords: Fabrication;Visualization;Video games;Accuracy;Prototypes;Rendering (computer
+    graphics);Digital twins;Digital Twin;Multidomain system;Fault injection;Fault
+    simulation;Unreal Engine
+  number: ''
+  pages: 1-5
+  title: 'Exploring Multidomain Faults in Digital Twin: A Gaming Engine Perspective
+    : Wild-and-Crazy-Idea Paper'
+  url: https://iris.univr.it/retrieve/a54d199d-c76d-41ef-9d52-50bb8f55ac4d/OPEN__2024__FDL__Exploring_Multidomain_Faults_in_Digital_Twin__A_Gaming_Engine_Perspective.pdf
+  volume: ''
+  year: '2024'
+- ENTRYTYPE: inproceedings
+  ID: '10767956'
+  author: Capogrosso, Luigi and Xu, Shengjie and Fraccaroli, Enrico and Cristani,
+    Marco and Fummi, Franco and Chakraborty, Samarjit
+  booktitle: 2024 IEEE 14th International Symposium on Industrial Embedded Systems
+    (SIES)
+  doi: 10.1109/SIES62473.2024.10767956
+  keywords: Machine learning algorithms;Embedded systems;Computer architecture;Machine
+    learning;Market research;Data transfer;Delays;Partitioning algorithms;State estimation;Robots;Split
+    Computing;Early Exit;Deep Neural Networks;Cyber-Physical Systems;Edge Devices
+  number: ''
+  pages: 132-139
+  title: Learning-Enabled CPS for Edge-Cloud Computing
+  url: https://iris.univr.it/retrieve/3c07a985-4fde-48ee-8957-9793e9786049/OPEN__2024__SIES__Learning_Enabled_CPS_for_Edge_Cloud_Computing.pdf
+  volume: ''
+  year: '2024'
+- ENTRYTYPE: inproceedings
+  ID: '10673767'
+  author: Capogrosso, Luigi and Fraccaroli, Enrico and Petrozziello, Giulio and Setti,
+    Francesco and Chakraborty, Samarjit and Fummi, Franco and Cristani, Marco
+  booktitle: 2024 Forum on Specification     Design Languages (FDL)
+  doi: 10.1109/FDL63219.2024.10673767
+  keywords: Performance evaluation;Training;Smart buildings;Source coding;Artificial
+    neural networks;Medical services;Real-time systems;Split Computing;Early Exit;Deep
+    Neural Networks;Predefined Sparsity;Edge Devices
+  number: ''
+  pages: 1-8
+  title: Enhancing Split Computing and Early Exit Applications through Predefined
+    Sparsity
+  url: https://iris.univr.it/retrieve/3a876695-380e-4612-8e4a-01fbf1d38572/OPEN__2024__FDL__Enhancing_Split_Computing_and_Early_Exit_Applications_through_Predefined_Sparsity.pdf
+  volume: ''
+  year: '2024'
+- ENTRYTYPE: inproceedings
+  ID: '10616082'
+  author: Tosoni, Francesco and Dall'Ora, Nicola and Fraccaroli, Enrico and Vinco,
+    Sara and Fummi, Franco
+  booktitle: 2024 IEEE 30th International Symposium on On-Line Testing and Robust
+    System Design (IOLTS)
+  doi: 10.1109/IOLTS60994.2024.10616082
+  keywords: ISO Standards;Control systems;Robustness;System analysis and design;Testing;Guidelines;Fault
+    simulation;Design robustness
+  number: ''
+  pages: 1-3
+  title: Assessing Robustness of Smart Systems via Multi-domain Analog Fault Simulation
+  url: https://iris.univr.it/retrieve/850b973b-6fd7-4bb3-8172-d064032f4a86/OPEN__2024__IOLTS__Assessing_Robustness_of_Smart_Systems_via_Multi_domain_Analog_Fault_Simulation.pdf
+  volume: ''
+  year: '2024'
+- ENTRYTYPE: inproceedings
+  ID: '10534606'
+  author: Dall'Ora, Nicola and Fraccaroli, Enrico and Gillon, Renaud and Fummi, Franco
+  booktitle: 2024 IEEE 25th Latin American Test Symposium (LATS)
+  doi: 10.1109/LATS62223.2024.10534606
+  keywords: Reviews;Instruments;Integrated circuit interconnections;Analog circuits;SPICE;Market
+    research;Circuit faults;Analog Circuits;Fault Simulation;Defect Model Templates;AHDLs
+  number: ''
+  pages: 1-2
+  title: 'Analog Fault Simulation: Trends and Perspectives in Analog Hardware Description
+    Languages'
+  url: https://iris.univr.it/retrieve/4d5f16a5-c389-4f43-b1a8-ec30e49351ce/OPEN__2024__LATS__Analog_Fault_Simulation__Trends_and_Perspectives_in_Analog_Hardware_Description_Languages.pdf
+  volume: ''
+  year: '2024'
+- ENTRYTYPE: article
+  ID: '10194295'
+  author: Azam, Sadia and Dall'Ora, Nicola and Fraccaroli, Enrico and Gillon, Renaud
+    and Fummi, Franco
+  doi: 10.1109/TCAD.2023.3298698
+  journal: IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems
+  keywords: Circuit faults;Surveys;Databases;Systematics;Transistors;Analog circuits;SPICE;Analog
+    circuits;defect injection;defect models;fault simulation;functional safety;SPICE-based
+    simulation;transistor-level models
+  number: '1'
+  pages: 16-29
+  title: 'Analog Defect Injection and Fault Simulation Techniques: A Systematic Literature
+    Review'
+  url: https://iris.univr.it/retrieve/10ef3a06-6720-49c4-9050-9c4df5e23624/Analog_Defect_Injection_and_Fault_Simulation_Techniques_A_Systematic_Literature_Review.pdf
+  volume: '43'
+  year: '2024'
+- ENTRYTYPE: inproceedings
+  ID: '10541026'
+  author: Gaiardelli, Sebastiano and Dall'Ora, Nicola and Ponzio, Francesco and Fraccaroli,
+    Enrico and Fummi, Franco and Di Cataldo, Santa and Vinco, Sara
+  booktitle: 2024 IEEE International Conference on Industrial Technology (ICIT)
+  doi: 10.1109/ICIT58233.2024.10541026
+  keywords: Data analysis;Time series analysis;Data integration;Production;Sensor
+    fusion;Robot sensing systems;Manipulators;Industry 4.0;Industrial IoT sensors;Data
+    fusion;Process monitoring;Anomaly detection
+  number: ''
+  pages: 1-8
+  title: A Data Fusion Service-Oriented Infrastructure for Production Line Monitoring
+  url: https://iris.univr.it/retrieve/a45f9841-adb1-468e-9dec-2ceb05adc19f/OPEN__2022__ICIT__A_Data_Fusion_Service_Oriented_Infrastructure_for_Production_Line_Monitoring.pdf
+  volume: ''
+  year: '2024'
 - ENTRYTYPE: article
   ID: '10368188'
   author: Tosoni, Francesco and Dall'Ora, Nicola and Fraccaroli, Enrico and Vinco,
@@ -23,5 +134,6 @@
   pages: 829-841
   title: Multidomain Fault Models Covering the Analog Side of a Smart or Cyber-Physical
     System
+  url: https://iris.univr.it/retrieve/13ec75c1-4f8a-4710-9613-b2149f2ba74a/Multi-Domain_Fault_Models_Covering_the_Analog_Side_of_a_Smart_or_Cyber-Physical_System.pdf
   volume: '73'
   year: '2024'

@@ -4,39 +4,48 @@ description: Template for publications page.
 ---
 
 {% if page.publications and site.data[page.publications] %}
-  {% assign publications = site.data[page.publications] %}
+{% assign publications = site.data[page.publications] %}
 {% elsif site.data.publications %}
-  {% assign publications = site.data.publications %}
+{% assign publications = site.data.publications %}
 {% endif %}
 
 {{ content }}
 
-<ol>
-{% for entry in publications %}
+<ol class="publication-list">
+  {% for entry in publications %}
   <li>
-    <div class="d-flex publication-entry">
-      <div>
+    <div class="publication-entry">
+      <div class="publication-type">
         {% if entry.ENTRYTYPE == "inproceedings" %}
-          {{ entry.author }}
-          <i>"{{ entry.title }},"</i>
-          in proceedings of {{ entry.booktitle }}, 
-          pp. {{ entry.pages }}, 
-          {{ entry.year }}, 
-          doi: <a href="http://dx.doi.org/{{ entry.doi }}">{{ entry.doi }}</a>.
+        Conference Paper
+        {% elsif entry.ENTRYTYPE == "article" %}
+        Journal Article
+        {% else %}
+        Other Publication
         {% endif %}
-        {% if entry.ENTRYTYPE == "article" %}
-          {{ entry.author }}
-          <i>"{{ entry.title }},"</i> 
-          in {{ entry.journal }}, 
-          vol. {{ entry.volume }}, 
-          no. {{ entry.number }}, 
-          pp. {{ entry.pages }}, 
-          {{ entry.year }}, 
-          doi: <a href="http://dx.doi.org/{{ entry.doi }}">{{ entry.doi }}</a>.
+      </div>
+      <div class="publication-author">{{ entry.author }}</div>
+      <div class="publication-title">
+        <strong>"{{ entry.title }}"</strong>
+      </div>
+      <div class="publication-details">
+        {% if entry.ENTRYTYPE == "inproceedings" %}
+        In proceedings of {{ entry.booktitle }}, pp. {{ entry.pages }}, {{ entry.year }}.
+        {% elsif entry.ENTRYTYPE == "article" %}
+        Published in {{ entry.journal }}, vol. {{ entry.volume }}, no. {{ entry.number }}, pp. {{ entry.pages }}, {{
+        entry.year }}.
+        {% endif %}
+      </div>
+      <div class="publication-links">
+        {% if entry.doi %}
+        DOI: <a href="http://dx.doi.org/{{ entry.doi }}" target="_blank" rel="noopener">{{ entry.doi }}</a>
+        {% endif %}
+        {% if entry.url %}
+        <br>
+        Open Access: <a href="{{ entry.url }}" target="_blank" rel="noopener">Read Here</a>
         {% endif %}
       </div>
     </div>
   </li>
-{% endfor %}
-
+  {% endfor %}
 </ol>
