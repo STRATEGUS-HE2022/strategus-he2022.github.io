@@ -4,7 +4,7 @@ tags: [News]
 title: STRATEGUS Project Funded
 description: The STRATEGUS project has been awarded a three-year Marie Skłodowska-Curie Postdoctoral Fellowship (Global Fellowship)
 author: Enrico Fraccaroli
-background: /assets/theme/images/msca_ue_logo.jpg
+background: /assets/theme/images/msca_ue_logo.png
 comments: true
 ---
 
