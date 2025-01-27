@@ -29,14 +29,14 @@ plugins:
 - jekyll-feed
 - jekyll-sitemap
 exclude:
-- README.md
 - Gemfile
 - Gemfile.lock
-- node_modules
+- jekyll-theme-petridish.gemspec
 - LICENSE
 - package-lock.json
 - package.json
-- petridish.gemspec
+- README.md
+- screenshot.png
 
 # FRONTMATTER DEFAULTS
 defaults:
