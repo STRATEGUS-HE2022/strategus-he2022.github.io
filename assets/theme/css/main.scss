@@ -37,7 +37,7 @@ $custom_font: {% if site.font_serif != false %}Lora{% else %}system-ui{% endif %
 $enable-rounded: {% if site.rounded_corners != false %}true{% else %}false{% endif %};
 
 // Variable overrides
-// 
+//
 // Need to be loaded first, see https://getbootstrap.com/docs/4.3/getting-started/theming/#variable-defaults
 @import "_variables";           // Overrides for Bootstrap variables
 
@@ -55,6 +55,7 @@ $enable-rounded: {% if site.rounded_corners != false %}true{% else %}false{% end
 @import "_toc";          // Table of content
 @import "_card";         // Blog post card
 @import "_team";         // Team members
+@import "_news";         // News
 @import "_publications"; // Publications
 @import "_footer";       // Footer
 @import "_custom";       // Custom styling

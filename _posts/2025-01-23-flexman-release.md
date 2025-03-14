@@ -1,5 +1,5 @@
 ---
-layout: home
+layout: news
 tags: [Release]
 title: "FlexMan: A New Adaptive Scheduling and Optimization Library Released"
 description: The STRATEGUS team has released the first version of FlexMan, an adaptive scheduling and optimization library for continuous-time scheduling problems.

@@ -41,7 +41,7 @@
       }
     }
   }
-  
+
   h1 {
     $header-h1: 3rem;
     font-size: $header-h1;
@@ -81,12 +81,12 @@
       margin-right: -0.25rem;
     }
   }
-  
+
   // Use light colored badge border when header has no background-image
   &.bg-no-image .badge {
     border: 2px solid lighten($secondary, 25);
   }
-  
+
   .caption {
     bottom: 0;
     color: darken($white, 25);

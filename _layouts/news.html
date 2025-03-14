@@ -3,12 +3,8 @@ layout: base
 description: Template for a list of posts as cards, with full width.
 ---
 
-<div class="row">
-  <div class="col">
-
-    {{ content }}
-  
-  </div>
+<div class="news-content">
+  {{ content }}
 </div>
 
 <div class="row cards">
@@ -23,11 +19,11 @@ description: Template for a list of posts as cards, with full width.
   // Filter cards on ?tag=value
   $(document).ready(function() {
     const urlParams = new URLSearchParams(window.location.search);
-    
+  
     if (urlParams.has("tag") && urlParams.get("tag") != "") {
       const tag = urlParams.get("tag"); // Will return 1st tag value + decode URI
       const cleanTag = $.trim(tag.toLowerCase()); // Create tag as written in .card data-tags
-      
+    
       $(".card").each(function() {
         const cardTags = $(this).data("tags").split("|");
         // Hide card if it does not contain the selected tag
@@ -37,8 +33,8 @@ description: Template for a list of posts as cards, with full width.
       });
 
       $(".header .tags").append(
-        '<a class="badge{% if site.rounded_corners != false %} rounded-pill{% endif %}" href="{{ site.archive_permalink | relative_url }}">' + 
-        tag + '<span class="btn-close btn-close-white"></span>' + 
+        '<a class="badge{% if site.rounded_corners != false %} rounded-pill{% endif %}" href="{{ site.archive_permalink | relative_url }}">' +
+        tag + '<span class="btn-close btn-close-white"></span>' +
         '</a>'
       );
     }

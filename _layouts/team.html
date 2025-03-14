@@ -29,13 +29,13 @@ description: Template for team page.
       {{ member.description | markdownify }}
 
       <ul class="list-inline">
-        
+      
         {% if member.web %}
           <li class="list-inline-item">
             <a href="{{ member.web }}"><i class="fa fa-university"></i></a>
           </li>
         {% endif %}
-        
+      
         {% if member.orcid %}
           <li class="list-inline-item">
             <a href="https://orcid.org/{{ member.orcid }}"><i class="ai ai-orcid"></i></a>
@@ -47,7 +47,7 @@ description: Template for team page.
             <a href="https://researchgate.net/profile/{{ member.researchgate }}"><i class="ai ai-researchgate"></i></a>
           </li>
         {% endif %}
-        
+      
         {% if member.googlescholar %}
           <li class="list-inline-item">
             <a href="https://scholar.google.com/citations?user={{ member.googlescholar }}"><i class="ai ai-google-scholar"></i></a>
