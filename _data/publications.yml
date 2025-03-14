@@ -1,4 +1,70 @@
 - ENTRYTYPE: inproceedings
+  ID: '10885702'
+  abstract: Deep Neural Networks (DNNs) are now widely used in Cyber-Physical Systems
+    (CPSs), both for sensor data or perception processing and also as neural network
+    controllers. However, resource constraints often prevent a full local deployment
+    of the DNNs, e.g., on edge devices. Implementing them on the cloud, on the other
+    hand, is associated with large delays and large volumes of data transfers. This
+    has resulted in the emergence of Split Computing (SC), where a part of the DNN
+    is implemented on an edge device and the rest in the cloud. However, how to design
+    control strategies with such a setup has not been sufficiently investigated in
+    the past. In this paper, we study controller design strategies where state estimates
+    from sensor data processed on an edge device are combined with estimates obtained
+    from the cloud. While the former is associated with low delays, the state estimates
+    have higher errors or uncertainties. The estimates from the cloud, obtained with
+    larger DNNs, are, however, delayed. We show that the problem of sizing the DNNs
+    on the edge and the cloud can be formulated as an optimization problem with the
+    goal of maximizing system safety.
+  author: Zhu, Tingan and Ganguli, Prateek and Gupta, Arkaprava and Xu, Shengjie and
+    Capogrosso, Luigi and Fraccaroli, Enrico and Cristani, Marco and Fummi, Franco
+    and Chakraborty, Samarjit
+  booktitle: 2025 17th International Conference on COMmunication Systems and NETworks
+    (COMSNETS)
+  doi: 10.1109/COMSNETS63942.2025.10885702
+  issn: 2155-2509
+  keywords: Hands;Cloud computing;Uncertainty;Process control;Artificial neural networks;Cyber-physical
+    systems;Data transfer;Delays;Safety;Optimization;Split Computing;Early Exit;Deep
+    Neural Networks;Cyber-Physical Systems
+  month: Jan
+  number: ''
+  pages: 198-206
+  title: Controllers for Edge-Cloud Cyber-Physical Systems
+  url: https://iris.univr.it/retrieve/3dbf76df-4d47-4ad9-af3f-84f350b6eec7/OPEN_2025_COMSNETS_Controllers_for_Edge_Cloud_Cyber_Physical_Systems.pdf
+  volume: ''
+  year: '2025'
+- ENTRYTYPE: inproceedings
+  ID: '10900702'
+  abstract: Split Computing (SC) enables deploying a Deep Neural Network (DNN) on
+    edge devices with limited resources by splitting the workload between the edge
+    device and a remote server. However, relying on a server can be expensive, requires
+    a reliable network, and introduces unpredictable latency. Existing solutions for
+    on-device DNNs deployment often sacrifice accuracy for efficiency. In this paper,
+    we study how to use the concepts from SC to split a DNN for executing on the same
+    device without compromising accuracy. In other words, we propose Local-Only Split
+    Computing (LO-SC), a new approach to split a DNN for execution entirely on the
+    edge device while maintaining high accuracy and predictable latency. We formalize
+    LO-SC as a MixedInteger Linear Problem (MILP) problem and solve it using a multi-constrained
+    ordered knapsack algorithm. The proposed method achieves promising results on
+    both synthetic and realworld data, offering a viable alternative for accurately
+    deploying DNNs on resource-constrained edge devices. The source code is available
+    at https://github.com/intelligolabs/LO-SC.
+  author: Capogrosso, Luigi and Fraccaroli, Enrico and Cristani, Marco and Fummi,
+    Franco and Chakraborty, Samarjit
+  booktitle: 2025 38th International Conference on VLSI Design and 2024 23rd International
+    Conference on Embedded Systems (VLSID)
+  doi: 10.1109/VLSID64188.2025.00089
+  issn: 2380-6923
+  keywords: Deep learning;Accuracy;Embedded systems;Source coding;Artificial neural
+    networks;Very large scale integration;Prediction algorithms;Servers;Reliability;Split
+    Computing;Knapsack Problem;Deep Neural Networks;Edge Devices
+  month: Jan
+  number: ''
+  pages: 445-450
+  title: 'LO-SC: Local-Only Split Computing for Accurate Deep Learning on Edge Devices'
+  url: https://iris.univr.it/retrieve/16a156c6-c392-4590-bd71-23b8b0e4f2c8/OPEN_2024_VLSID_LO_SC_Local_only_Split_Computing_for_Accurate_Deep_Learning_on_Edge_Devices.pdf
+  volume: ''
+  year: '2025'
+- ENTRYTYPE: inproceedings
   ID: '10673865'
   author: Tosoni, Francesco and Dall'Ora, Nicola and Fraccaroli, Enrico and Vinco,
     Sara and Fummi, Franco
