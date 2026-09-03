@@ -4,8 +4,11 @@ Suggest publications to add to src/data/publications.bib.
 
 Looks up a team member's publications on Google Scholar (through the `scholarly`
 package) or on OpenAlex (through their ORCID), compares them with the bibliography,
-and prints the ones that are missing. It is a maintainer tool: it reads the
-repository, talks to the source, prints a report, and **never modifies a file**.
+and prints the ones that are missing. For every suggestion it prints where the paper
+lives (the publisher's page that doi.org points at — IEEE Xplore, ACM DL, MDPI, arXiv)
+and, with `--bibtex`, downloads the BibTeX entry from the DOI registrar and reformats
+it in the style of the bibliography. It is a maintainer tool: it reads the repository,
+talks to the sources, prints a report, and **never modifies a file**.
 
 Setup, once:
 
@@ -16,12 +19,22 @@ Usage:
 
     .venv/bin/python scripts/suggest-publications.py                     # Google Scholar, since the project start
     .venv/bin/python scripts/suggest-publications.py --source openalex   # OpenAlex by ORCID (reliable, no scraping)
-    .venv/bin/python scripts/suggest-publications.py --bibtex            # print a draft BibTeX entry per suggestion
+    .venv/bin/python scripts/suggest-publications.py --bibtex            # BibTeX for every suggestion, ready to paste
     .venv/bin/python scripts/suggest-publications.py --person franco-fummi --since 2024
 
-Google Scholar has no API: `scholarly` scrapes it, and Google throttles or blocks
-scrapers without warning. When that happens the script says so; run it again later or
-use `--source openalex`, which is an open API keyed on the person's ORCID.
+Where the data comes from:
+
+  - Google Scholar has no API: `scholarly` scrapes it, and Google throttles or blocks
+    scrapers without warning. When that happens the script says so; run it again later
+    or use `--source openalex`, an open API keyed on the person's ORCID.
+  - A suggestion without a DOI (Scholar rarely has them) is looked up on Crossref by
+    title; the DOI is accepted only when the titles match.
+  - `page:` is the address doi.org redirects to. The script reads the redirect and never
+    fetches the publisher's page itself.
+  - `--bibtex` asks doi.org for `application/x-bibtex`, which Crossref and DataCite serve
+    for every DOI they register. The entry is reformatted (ampersands escaped, page ranges
+    in BibTeX form, the open-access copy known to OpenAlex as `url`) and gets a key in the
+    style `fraccaroli2025frost`. Check it against the publisher before pasting.
 """
 from __future__ import annotations
 
@@ -40,6 +53,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PEOPLE = ROOT / "src/content/people"
 BIB = ROOT / "src/data/publications.bib"
 SITE = ROOT / "src/data/site.ts"
+TIMEOUT = 30
 
 # --- Records --------------------------------------------------------------------------
 
@@ -56,9 +70,12 @@ class Work:
     kind: str | None = None  # journal | conference | preprint | chapter | other
     authors: list[str] = field(default_factory=list)
     url: str | None = None
+    oa_url: str | None = None
+    landing: str | None = None
     volume: str | None = None
     number: str | None = None
     pages: str | None = None
+    doi_note: str | None = None
     raw: object = field(default=None, repr=False, compare=False)
 
 
@@ -93,6 +110,11 @@ def project_start_year() -> int:
     return int(m.group(1)) if m else 2023
 
 
+def site_email() -> str | None:
+    m = re.search(r"email:\s*'([^']+)'", SITE.read_text(encoding="utf-8"))
+    return m.group(1) if m else None
+
+
 def _read_value(s: str, i: int) -> tuple[str, int]:
     """Read a BibTeX field value starting at s[i]: {…} with nesting, "…", or a bare token."""
     if s[i] == "{":
@@ -110,11 +132,14 @@ def _read_value(s: str, i: int) -> tuple[str, int]:
         j = s.index('"', i + 1)
         return s[i + 1 : j], j + 1
     m = re.match(r"[^,}\s]+", s[i:])
+    if not m:
+        raise ValueError("empty value")
     return m.group(0), i + len(m.group(0))
 
 
-def parse_bib(text: str) -> list[BibEntry]:
-    entries: list[BibEntry] = []
+def parse_entries(text: str) -> list[tuple[str, str, dict[str, str]]]:
+    """(type, key, raw fields) for every entry; braces inside values are kept."""
+    entries: list[tuple[str, str, dict[str, str]]] = []
     for m in re.finditer(r"@(\w+)\s*\{\s*([^,\s]+)\s*,", text):
         etype = m.group(1).lower()
         if etype in ("comment", "string", "preamble"):
@@ -125,22 +150,28 @@ def parse_bib(text: str) -> list[BibEntry]:
             fm = re.compile(r"\s*([A-Za-z_]+)\s*=\s*").match(text, i)
             if not fm:
                 break
-            value, i = _read_value(text, fm.end())
-            fields[fm.group(1).lower()] = re.sub(r"\s+", " ", value.replace("{", "").replace("}", "")).strip()
+            try:
+                value, i = _read_value(text, fm.end())
+            except ValueError:
+                break
+            fields[fm.group(1).lower()] = value
             cm = re.compile(r"\s*,").match(text, i)
             if cm:
                 i = cm.end()
-        year = fields.get("year", "")
-        entries.append(
-            BibEntry(
-                key=m.group(2),
-                type=etype,
-                title=fields.get("title", ""),
-                doi=norm_doi(fields.get("doi")),
-                year=int(year) if year.isdigit() else None,
-            )
-        )
+        entries.append((etype, m.group(2), fields))
     return entries
+
+
+def plain(value: str) -> str:
+    return re.sub(r"\s+", " ", value.replace("{", "").replace("}", "")).strip()
+
+
+def parse_bib(text: str) -> list[BibEntry]:
+    out: list[BibEntry] = []
+    for etype, key, fields in parse_entries(text):
+        year = plain(fields.get("year", ""))
+        out.append(BibEntry(key=key, type=etype, title=plain(fields.get("title", "")), doi=norm_doi(plain(fields.get("doi", ""))), year=int(year) if year.isdigit() else None))
+    return out
 
 
 # --- Matching -------------------------------------------------------------------------
@@ -201,6 +232,10 @@ def drop_superseded_preprints(works: list[Work]) -> tuple[list[Work], list[Work]
 # --- Sources --------------------------------------------------------------------------
 
 
+def user_agent(mailto: str | None) -> str:
+    return f"strategus-he2022.github.io suggest-publications ({'mailto:' + mailto if mailto else 'https://strategus-he2022.github.io/'})"
+
+
 def fetch_openalex(orcid: str, since: int, mailto: str | None) -> list[Work]:
     import requests
 
@@ -209,12 +244,12 @@ def fetch_openalex(orcid: str, since: int, mailto: str | None) -> list[Work]:
     params = {
         "filter": f"authorships.author.orcid:{orcid},publication_year:>{since - 1}",
         "per-page": 200,
-        "select": "id,doi,title,publication_year,type,primary_location,biblio,authorships",  # raw_source_name rides inside primary_location
+        "select": "id,doi,title,publication_year,type,primary_location,biblio,authorships,open_access,best_oa_location",
     }
     if mailto:
         params["mailto"] = mailto
     while cursor:
-        r = requests.get("https://api.openalex.org/works", params={**params, "cursor": cursor}, timeout=30)
+        r = requests.get("https://api.openalex.org/works", params={**params, "cursor": cursor}, timeout=TIMEOUT, headers={"User-Agent": user_agent(mailto)})
         r.raise_for_status()
         data = r.json()
         for w in data.get("results", []):
@@ -238,16 +273,21 @@ def fetch_openalex(orcid: str, since: int, mailto: str | None) -> list[Work]:
                 venue = html.unescape(html.unescape(venue)).strip() or None
             biblio = w.get("biblio") or {}
             first, last = biblio.get("first_page"), biblio.get("last_page")
+            oa = (w.get("best_oa_location") or {}).get("pdf_url") or (w.get("open_access") or {}).get("oa_url")
+            doi = norm_doi(w.get("doi"))
+            if oa and doi and norm_doi(oa) == doi:
+                oa = None  # the "open access" location is just the DOI link
             works.append(
                 Work(
                     title=w.get("title") or "",
                     year=w.get("publication_year"),
                     source="openalex",
-                    doi=norm_doi(w.get("doi")),
+                    doi=doi,
                     venue=venue,
                     kind=kind,
                     authors=[a["author"]["display_name"] for a in w.get("authorships", []) if a.get("author")],
                     url=loc.get("landing_page_url") or w.get("id"),
+                    oa_url=oa,
                     volume=biblio.get("volume"),
                     number=biblio.get("issue"),
                     pages=f"{first}--{last}" if first and last and first != last else first,
@@ -270,40 +310,133 @@ def fetch_scholar(scholar_id: str, since: int) -> list[Work]:
         year = int(year_text) if year_text.isdigit() else None
         if year is not None and year < since:
             continue
-        works.append(
-            Work(
-                title=bib.get("title", ""),
-                year=year,
-                source="scholar",
-                venue=bib.get("citation") or None,
-                url=pub.get("pub_url"),
-                raw=pub,
-            )
-        )
+        works.append(Work(title=bib.get("title", ""), year=year, source="scholar", venue=bib.get("citation") or None, url=pub.get("pub_url"), raw=pub))
     return works
+
+
+# --- Resolving: DOI by title, landing page, BibTeX from the registrar ------------------
+
+
+def find_doi_by_title(title: str, mailto: str | None) -> str | None:
+    import requests
+
+    params = {"query.bibliographic": title, "rows": 3, "select": "DOI,title"}
+    if mailto:
+        params["mailto"] = mailto
+    try:
+        r = requests.get("https://api.crossref.org/works", params=params, timeout=TIMEOUT, headers={"User-Agent": user_agent(mailto)})
+        r.raise_for_status()
+    except requests.RequestException:
+        return None
+    for item in (r.json().get("message") or {}).get("items", []):
+        candidate = (item.get("title") or [""])[0]
+        if candidate and same_title(candidate, title):
+            return norm_doi(item.get("DOI"))
+    return None
+
+
+def landing_page(doi: str, mailto: str | None) -> str | None:
+    """Where doi.org sends a browser — read from the redirect, without visiting the publisher."""
+    import requests
+
+    try:
+        r = requests.head(f"https://doi.org/{doi}", allow_redirects=False, timeout=TIMEOUT, headers={"User-Agent": user_agent(mailto)})
+    except requests.RequestException:
+        return None
+    return r.headers.get("Location")
+
+
+def registrar_bibtex(doi: str, mailto: str | None) -> str | None:
+    import requests
+
+    try:
+        r = requests.get(
+            f"https://doi.org/{doi}",
+            headers={"Accept": "application/x-bibtex; charset=utf-8", "User-Agent": user_agent(mailto)},
+            timeout=TIMEOUT,
+        )
+    except requests.RequestException:
+        return None
+    text = r.text.strip()
+    return text if r.ok and text.startswith("@") else None
 
 
 # --- Output ---------------------------------------------------------------------------
 
-
 STOPWORDS = {"a", "an", "the", "of", "on", "for", "and", "to", "in", "with", "via", "from", "by", "at", "towards", "toward"}
+FIELD_ORDER = ["author", "title", "journal", "booktitle", "howpublished", "year", "volume", "number", "pages", "month", "issn", "isbn", "doi", "url"]
 
 
-def bibtex_key(work: Work) -> str:
+def bibtex_key(work: Work, authors: list[str] | None = None) -> str:
     """`fraccaroli2025frost`: family name of the first author, year, first significant title word."""
-    # The family name is the last whitespace token, kept whole: "Dall'Ora" -> "dallora".
-    family = re.sub(r"[^a-z0-9]", "", norm_title(work.authors[0].split()[-1]).replace(" ", "")) if work.authors else "anon"
+    names = authors or work.authors
+    first = names[0] if names else ""
+    # "Family, Given" (BibTeX) or "Given Family" (OpenAlex); the family name is kept whole: Dall'Ora -> dallora.
+    family_text = first.split(",")[0] if "," in first else (first.split()[-1] if first.split() else "anon")
+    family = re.sub(r"[^a-z0-9]", "", norm_title(family_text).replace(" ", "")) or "anon"
     words = [w for w in norm_title(work.title).split(" ") if w and w not in STOPWORDS and not w.isdigit()]
     return f"{family}{work.year or ''}{words[0] if words else ''}"
 
 
 def bib_escape(value: str) -> str:
-    return value.replace("\\&", "&").replace("&", "\\&")
+    return re.sub(r"(?<!\\)&", r"\\&", value)
+
+
+def clean_value(value: str) -> str:
+    value = html.unescape(html.unescape(value))
+    value = re.sub(r"\s+", " ", value).strip()
+    return bib_escape(value)
+
+
+def format_entry(etype: str, key: str, fields: dict[str, str]) -> str:
+    lines = [f"@{etype}{{{key},"]
+    for name in FIELD_ORDER:
+        if fields.get(name):
+            lines.append(f"  {name:<9} = {{{fields[name]}}},")
+    lines[-1] = lines[-1].rstrip(",")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def tidy_registrar_bibtex(text: str, work: Work) -> str | None:
+    """Registrar BibTeX → the bibliography's style. Returns None when the text is not one entry."""
+    parsed = parse_entries(text)
+    if len(parsed) != 1:
+        return None
+    etype, _, raw = parsed[0]
+    fields = {k: clean_value(v) for k, v in raw.items()}
+    if fields.get("pages"):
+        fields["pages"] = re.sub(r"\s*[–—-]+\s*", "--", fields["pages"])
+    doi = norm_doi(fields.get("doi")) or work.doi
+    if doi:
+        fields["doi"] = doi
+    # The registrar's url is the DOI link again; the site wants the open-access copy there, if any.
+    if fields.get("url") and norm_doi(fields["url"]) == doi:
+        fields.pop("url")
+    arxiv = re.match(r"^10\.48550/arxiv\.(.+)$", doi or "")
+    if arxiv:
+        # DataCite describes arXiv as @misc with publisher; the bibliography writes them as the existing entry does.
+        etype = "article"
+        fields["journal"] = f"arXiv preprint arXiv:{arxiv.group(1)}"
+        fields["url"] = f"https://arxiv.org/pdf/{arxiv.group(1)}"
+    else:
+        if work.kind == "preprint" and not (fields.get("journal") or fields.get("booktitle")):
+            # Other preprint servers (TechRxiv, bioRxiv…): the site's parser reads the server name
+            # from `journal` to label the entry a preprint, as it does for arXiv.
+            server = "TechRxiv" if (doi or "").startswith("10.36227/") else (work.venue or "Preprint")
+            etype = "article"
+            fields["journal"] = f"{server} preprint"
+        if work.oa_url and not fields.get("url"):
+            fields["url"] = work.oa_url
+    authors = [a.strip() for a in re.split(r"\s+and\s+", fields.get("author", "")) if a.strip()]
+    if not work.year and fields.get("year", "").isdigit():
+        work.year = int(fields["year"])
+    return format_entry(etype, bibtex_key(work, authors), fields)
 
 
 def draft_bibtex(work: Work) -> str:
-    """A BibTeX entry drafted from an OpenAlex record — check it against the publisher before pasting."""
-    if work.source == "scholar":
+    """A BibTeX entry drafted from the source's own fields, used when the registrar has nothing."""
+    if work.source == "scholar" and not work.doi:
         from scholarly import scholarly
 
         try:
@@ -313,32 +446,43 @@ def draft_bibtex(work: Work) -> str:
             return f"% could not fetch details from Google Scholar ({error.__class__.__name__}); title: {work.title}"
     etype = {"journal": "article", "conference": "inproceedings", "chapter": "incollection"}.get(work.kind or "", "misc")
     venue_field = {"article": "journal", "inproceedings": "booktitle", "incollection": "booktitle"}.get(etype, "howpublished")
-    lines = [f"@{etype}{{{bibtex_key(work)},"]
-    if work.authors:
-        lines.append(f"  author    = {{{' and '.join(work.authors)}}},")
-    lines.append(f"  title     = {{{bib_escape(work.title)}}},")
-    if work.venue:
-        lines.append(f"  {venue_field:<9} = {{{bib_escape(work.venue)}}},")
-    if work.year:
-        lines.append(f"  year      = {{{work.year}}},")
-    if work.volume:
-        lines.append(f"  volume    = {{{work.volume}}},")
-    if work.number:
-        lines.append(f"  number    = {{{work.number}}},")
-    if work.pages:
-        lines.append(f"  pages     = {{{work.pages}}},")
+    fields = {
+        "author": " and ".join(work.authors),
+        "title": bib_escape(work.title),
+        venue_field: bib_escape(work.venue) if work.venue else "",
+        "year": str(work.year) if work.year else "",
+        "volume": work.volume or "",
+        "number": work.number or "",
+        "pages": work.pages or "",
+        "doi": work.doi or "",
+        "url": work.oa_url or "",
+    }
+    return format_entry(etype, bibtex_key(work), fields)
+
+
+def bibtex_for(work: Work, mailto: str | None) -> str:
     if work.doi:
-        lines.append(f"  doi       = {{{work.doi}}},")
-    lines[-1] = lines[-1].rstrip(",")
-    lines.append("}")
-    return "\n".join(lines)
+        text = registrar_bibtex(work.doi, mailto)
+        tidy = tidy_registrar_bibtex(text, work) if text else None
+        if tidy:
+            return tidy
+        return f"% doi.org returned no BibTeX for {work.doi}; drafted from the source instead:\n" + draft_bibtex(work)
+    return "% no DOI known; drafted from the source:\n" + draft_bibtex(work)
 
 
 def describe(work: Work) -> str:
     bits = [b for b in (work.venue, f"doi:{work.doi}" if work.doi else None, work.kind if work.kind and work.kind != "other" else None) if b]
-    head = f"{work.year or '????'}  {work.title}"
-    body = " · ".join(bits) if bits else (work.url or "")
-    return head + ("\n      " + textwrap.fill(body, 96, subsequent_indent="      ") if body else "")
+    lines = [f"{work.year or '????'}  {work.title}"]
+    if bits:
+        lines.append(textwrap.fill(" · ".join(bits), 96, initial_indent="      ", subsequent_indent="      "))
+    if work.doi_note:
+        lines.append(f"      {work.doi_note}")
+    page = work.landing or (work.url if work.source == "scholar" else None)
+    if page:
+        lines.append(f"      page: {page}")
+    if work.oa_url:
+        lines.append(f"      open access: {work.oa_url}")
+    return "\n".join(lines)
 
 
 def main() -> int:
@@ -346,10 +490,11 @@ def main() -> int:
     parser.add_argument("--person", default="enrico-fraccaroli", help="slug of the team member (src/content/people/<slug>.md)")
     parser.add_argument("--source", choices=("scholar", "openalex", "both"), default="scholar", help="where to look (default: scholar)")
     parser.add_argument("--since", type=int, default=None, help="earliest publication year (default: the project start year from site.ts)")
-    parser.add_argument("--bibtex", action="store_true", help="print a draft BibTeX entry for every suggestion")
+    parser.add_argument("--bibtex", action="store_true", help="print a BibTeX entry for every suggestion, fetched from the DOI registrar")
     parser.add_argument("--json", action="store_true", help="print the suggestions as JSON instead of the report")
     parser.add_argument("--include-superseded", action="store_true", help="also list preprints whose published version was found")
     parser.add_argument("--include-undated", action="store_true", help="also list items without a year (usually Scholar profile noise)")
+    parser.add_argument("--no-resolve", action="store_true", help="skip Crossref and doi.org: no DOI lookup by title, no publisher page")
     args = parser.parse_args()
 
     person_file = PEOPLE / f"{args.person}.md"
@@ -358,6 +503,7 @@ def main() -> int:
         raise SystemExit(f"no team member '{args.person}' (available: {available})")
     person = read_frontmatter(person_file)
     since = args.since or project_start_year()
+    mailto = person.get("email") or site_email()
     bib = parse_bib(BIB.read_text(encoding="utf-8"))
 
     scholar_id = None
@@ -383,7 +529,7 @@ def main() -> int:
             errors.append(f"{args.person} has no ORCID in the people record")
         else:
             try:
-                works += fetch_openalex(orcid, since, person.get("email"))
+                works += fetch_openalex(orcid, since, mailto)
                 sources_used.append(f"OpenAlex (ORCID {orcid})")
             except Exception as error:  # noqa: BLE001
                 errors.append(f"OpenAlex failed ({error.__class__.__name__}: {str(error)[:120]})")
@@ -412,6 +558,18 @@ def main() -> int:
     suggestions = sorted((w for w in merged if find_in_bib(w, bib) is None), key=lambda w: (-(w.year or 0), w.title))
     unmatched_bib = [e for e in bib if e.key not in listed_keys and (e.year or 0) >= since]
 
+    if not args.no_resolve:
+        for w in suggestions:
+            if not w.doi:
+                found = find_doi_by_title(w.title, mailto)
+                if found:
+                    w.doi, w.doi_note = found, "DOI found on Crossref by title"
+                    if find_in_bib(w, bib):
+                        w.doi_note += " — already in publications.bib under that DOI"
+            if w.doi:
+                w.landing = landing_page(w.doi, mailto)
+        suggestions = [w for w in suggestions if not (w.doi_note and "already" in w.doi_note)]
+
     if args.json:
         print(json.dumps([{k: v for k, v in asdict(w).items() if k != "raw"} for w in suggestions], indent=2, ensure_ascii=False))
         return 0
@@ -430,7 +588,7 @@ def main() -> int:
         for w in suggestions:
             print("  " + describe(w).replace("\n", "\n  "))
             if args.bibtex:
-                print(textwrap.indent(draft_bibtex(w), "      "))
+                print(textwrap.indent(bibtex_for(w, mailto), "      "))
             print()
     else:
         print("Nothing to add: every publication found is already in the bibliography.\n")

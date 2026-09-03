@@ -103,16 +103,25 @@ Then:
 ```
 
 The report lists what was found, what is already in the bibliography, the suggested
-additions (newest first, with DOI and venue when the source has them) and, at the end, the
-entries of the bibliography the source did not return. Preprints whose published version
-was also found are hidden; `--include-superseded` shows them.
+additions (newest first) and, at the end, the entries of the bibliography the source did
+not return. For every suggestion it prints the DOI, the venue when the source has it, the
+**publisher's page** that doi.org points at (IEEE Xplore, ACM Digital Library, MDPI,
+arXiv…) so you can go there, and the open-access copy when OpenAlex knows one. A
+suggestion without a DOI (Scholar rarely has them) is looked up on Crossref by title.
+Preprints whose published version was also found are hidden; `--include-superseded` shows
+them.
+
+**`--bibtex` fetches real entries.** For every suggestion with a DOI it asks doi.org for
+`application/x-bibtex` — the entry Crossref or DataCite registered — and reformats it in
+the style of `publications.bib`: ampersands escaped, page ranges as `--`, the open-access
+copy as `url`, arXiv records written like the existing arXiv entry, and a key in the style
+`fraccaroli2025frost`. Paste, check against the publisher's record (the IEEE Xplore
+"Cite This" export also carries `keywords` and `issn`, which are optional), add the IRIS
+`url` if there is one, and run `npm run ci`.
 
 The Scholar and ORCID ids come from the person's record in `src/content/people/`, so the
 tool works for anyone on the Team page who has them. Google Scholar has no API and blocks
 scrapers without warning; when it fails, the script says so — retry later or use OpenAlex.
-
-Drafted BibTeX entries are a starting point: check them against the publisher's record,
-add the open-access `url`, and run `npm run ci`.
 
 ## Validate
 
