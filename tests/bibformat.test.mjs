@@ -36,7 +36,8 @@ test('sorts newest year first, then by first author, and opens each year with a 
 
 test('canonical field layout: fixed order, aligned =, braces, no trailing comma, empties and abstracts dropped', () => {
   const { text, notes } = formatBibtex(messy);
-  const late = text.slice(text.indexOf('@inproceedings{late,'), text.indexOf('}', text.indexOf('@inproceedings{late,')) + 1);
+  const start = text.indexOf('@inproceedings{late,');
+  const late = text.slice(start, text.indexOf('\n}', start) + 2); // up to the entry's own closing brace
   assert.equal(
     late,
     [
