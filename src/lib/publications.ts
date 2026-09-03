@@ -230,9 +230,10 @@ export function publicationsForPerson<T extends Publication>(
   );
 }
 
-/** "A, B and C" for display. */
+/** "A, B and C" for display; a trailing "et al." (BibTeX "and others") reads "A, B, C et al.". */
 export function formatAuthors(authors: readonly string[]): string {
   if (authors.length <= 1) return authors[0] ?? '';
+  if (authors.at(-1) === 'et al.') return `${authors.slice(0, -1).join(', ')} et al.`;
   return `${authors.slice(0, -1).join(', ')} and ${authors.at(-1)}`;
 }
 

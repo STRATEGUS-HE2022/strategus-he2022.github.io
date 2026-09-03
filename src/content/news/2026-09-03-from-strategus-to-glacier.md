@@ -36,5 +36,6 @@ developers can use, extend, and contribute to.
 
 ## Links
 
+- **GLACIER on this site**: [Software](/software/#glacier)
 - **GLACIER website**: [glacier-project.github.io](https://glacier-project.github.io/glacier-website/)
 - **GLACIER GitHub organization**: [github.com/glacier-project](https://github.com/glacier-project)

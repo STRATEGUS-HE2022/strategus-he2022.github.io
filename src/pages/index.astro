@@ -1,7 +1,7 @@
 ---
 /**
  * Home page: the project identity, what the project is, the three most recent news items,
- * and who funds it. Bands alternate paper / paper-2 so the page reads as plates rather
+ * the software the project has produced, and who funds it. Bands alternate paper / paper-2 so the page reads as plates rather
  * than one white sheet.
  */
 import euEmblem from '../assets/images/eu-msca.png';
@@ -12,9 +12,10 @@ import SectionHeading from '../components/SectionHeading.astro';
 import { Content as About } from '../content/home.md';
 import { site } from '../data/site.ts';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getNews } from '../lib/content.ts';
+import { getNews, getSoftware } from '../lib/content.ts';
 
 const news = (await getNews()).slice(0, 3);
+const software = await getSoftware();
 const period = `${site.funding.start.slice(0, 4)} – ${site.funding.end.slice(0, 4)}`;
 ---
 
@@ -32,6 +33,7 @@ const period = `${site.funding.start.slice(0, 4)} – ${site.funding.end.slice(0
       <nav class="hero__links" aria-label="Start here">
         <a class="more" href="/news/">News</a>
         <a class="more" href="/publications/">Publications</a>
+        <a class="more" href="/software/">Software</a>
         <a class="more" href="/team/">Team</a>
       </nav>
     </div>
@@ -56,7 +58,27 @@ const period = `${site.funding.start.slice(0, 4)} – ${site.funding.end.slice(0
     </div>
   )}
 
-  <div class="band band--sunken">
+  {/* The software outlives the fellowship; it sits right before the funding plate. */}
+  {software.length > 0 && (
+    <div class="band band--sunken">
+      <section class="section container" aria-labelledby="home-software">
+        <SectionHeading eyebrow="Software" title="Open tools born in the project" id="home-software" moreHref="/software/" moreLabel="All software" />
+        <ol class="tools">
+          {software.map((item) => (
+            <li class="tool">
+              <p class="tool__kind">{item.data.kind}</p>
+              <div>
+                <h3 class="tool__name"><a href={`/software/#${item.id}`}>{item.data.name}</a></h3>
+                <p class="tool__summary">{item.data.summary}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  )}
+
+  <div class="band">
     <section class="section container" aria-labelledby="home-funding">
       <SectionHeading eyebrow="Funding and partners" title="A Marie Skłodowska-Curie Global Fellowship" id="home-funding" />
       <div class="funding">
@@ -270,8 +292,53 @@ const period = `${site.funding.start.slice(0, 4)} – ${site.funding.end.slice(0
     color: var(--color-ink-2);
   }
 
+  .tools {
+    list-style: none;
+    padding: 0;
+    display: grid;
+  }
+
+  .tool {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: var(--space-sm) var(--space-xl);
+    padding-block: var(--space-md);
+    border-top: var(--rule);
+  }
+
+  .tool:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .tool__kind {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  .tool__name {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .tool__name a {
+    text-decoration: none;
+  }
+
+  .tool__name a:hover {
+    text-decoration: underline;
+  }
+
+  .tool__summary {
+    color: var(--color-ink-2);
+    max-width: var(--measure);
+  }
+
   @media (max-width: 40rem) {
-    .partner {
+    .partner,
+    .tool {
       grid-template-columns: 1fr;
     }
   }

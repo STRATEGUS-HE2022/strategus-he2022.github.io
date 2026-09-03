@@ -14,6 +14,7 @@ the site says. Find your task, open the guide, follow it.
 | I want to… | Read |
 | --- | --- |
 | Add news | [docs/news.md](docs/news.md) |
+| Add or update a software record | [docs/software.md](docs/software.md) |
 | Add a publication, or find papers missing from the list | [docs/publications.md](docs/publications.md) |
 | Edit a team member or a portrait | [docs/team.md](docs/team.md) |
 | Change the project description, funding statement, partners, colours | [docs/site-settings.md](docs/site-settings.md) |
@@ -66,6 +67,7 @@ src/content/
   home.md                  the project description on the home page
   people/                  one Markdown file per team member (+ portrait next to it)
   news/                    one Markdown file per news item, YYYY-MM-DD-<slug>.md
+  software/                one Markdown file per software record (ecosystem, platform, library)
 src/assets/                the mark, the EU emblem, the vendored Inter font
 src/pages/                 routes — no content lives here
 src/layouts/               HTML shell, inner-page layout, detail layout
@@ -87,6 +89,7 @@ docs/                      the task guides linked above
 | `/` | `src/pages/index.astro` |
 | `/news/`, `/news/<slug>/` | `src/pages/news/` |
 | `/publications/`, `/publications.bib` | `src/pages/publications/`, `src/pages/publications.bib.ts` |
+| `/software/` (`#<slug>` per record) | `src/pages/software.astro` |
 | `/team/` (`#<slug>` per person) | `src/pages/team.astro` |
 | `/404.html` | `src/pages/404.astro` |
 | `/sitemap-index.xml`, `/robots.txt` | generated |

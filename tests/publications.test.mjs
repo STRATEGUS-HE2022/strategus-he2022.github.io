@@ -119,3 +119,8 @@ test('formatting helpers', () => {
   assert.equal(formatVenueLine(conf), 'DATE, pp. 1–6');
   assert.equal(formatVenueLine({ ...conf, volume: '12', number: '3', pages: undefined }), 'DATE, 12(3)');
 });
+
+test('formatAuthors folds a trailing "et al." into the list instead of "and et al."', () => {
+  assert.equal(formatAuthors(['A. One', 'B. Two', 'et al.']), 'A. One, B. Two et al.');
+  assert.equal(formatAuthors(['A. One', 'B. Two']), 'A. One and B. Two');
+});

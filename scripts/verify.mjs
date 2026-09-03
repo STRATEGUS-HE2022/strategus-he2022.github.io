@@ -136,7 +136,7 @@ if (!existsSync(dist)) {
 } else {
   const required = [
     'index.html', '404.html', 'robots.txt', '.nojekyll', 'sitemap-index.xml', 'publications.bib', 'favicon.ico',
-    'news/index.html', 'publications/index.html', 'team/index.html',
+    'news/index.html', 'publications/index.html', 'software/index.html', 'team/index.html',
   ];
   for (const f of required) if (!existsSync(path.join(dist, f))) fail(`dist/${f} is missing`);
 
@@ -176,7 +176,12 @@ if (!existsSync(dist)) {
   for (const { slug } of people) {
     if (!team.includes(`id="${slug}"`)) fail(`dist/team/: no section with id="${slug}" for people/${slug}.md — author links would point nowhere`);
   }
-  notes.push(`${news.length} news pages and ${people.length} team anchors present in dist/`);
+  const softwarePage = existsSync(path.join(dist, 'software/index.html')) ? readFileSync(path.join(dist, 'software/index.html'), 'utf8') : '';
+  const software = records('software');
+  for (const { slug } of software) {
+    if (!softwarePage.includes(`id="${slug}"`)) fail(`dist/software/: no section with id="${slug}" for software/${slug}.md — links from the home page would point nowhere`);
+  }
+  notes.push(`${news.length} news pages, ${people.length} team anchors and ${software.length} software anchors present in dist/`);
 }
 
 // --- Report ----------------------------------------------------------------------------

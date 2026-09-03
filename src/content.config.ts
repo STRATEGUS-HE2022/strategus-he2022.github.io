@@ -6,6 +6,7 @@
  * Where the content lives (see the guides in docs/):
  *   src/content/people/<slug>.md (+ portrait next to it)
  *   src/content/news/YYYY-MM-DD-<slug>.md
+ *   src/content/software/<slug>.md
  *   src/data/publications.bib (+ publications.overrides.yaml)
  */
 import { defineCollection, reference } from 'astro:content';
@@ -69,6 +70,36 @@ const news = defineCollection({
   }),
 });
 
+/**
+ * Software produced by, or continuing, the project: an ecosystem, a platform, a library.
+ * The page /software/ has one section per record, in `order`, with the record's slug as
+ * its id (so /software/#frost works from news and from the home page).
+ */
+const software = defineCollection({
+  loader: glob({ pattern: MARKDOWN, base: './src/content/software' }),
+  schema: z.object({
+    name: z.string().min(1),
+    /** Short label shown in the margin: "Ecosystem", "Simulation platform", "C++ library". */
+    kind: z.string().min(1),
+    /** One sentence, shown in lists and used as the meta description of the section. */
+    summary: z.string().min(1),
+    /** The ecosystem this piece belongs to, if any (another software record). */
+    partOf: reference('software').optional(),
+    website: z.url().optional(),
+    repository: z.url(),
+    documentation: z.url().optional(),
+    /** SPDX id or short name, e.g. "BSD-2-Clause". */
+    licence: z.string().min(1),
+    /** Main implementation languages, as shown. */
+    languages: z.array(z.string().min(1)).default([]),
+    /** BibTeX keys in src/data/publications.bib describing this software. */
+    publications: z.array(z.string().min(1)).default([]),
+    /** Team members involved. */
+    people: z.array(reference('people')).default([]),
+    order: z.number().int().default(100),
+  }),
+});
+
 const publications = defineCollection({
   loader: publicationsLoader({
     bib: './src/data/publications.bib',
@@ -98,4 +129,4 @@ const publications = defineCollection({
   }),
 });
 
-export const collections = { people, news, publications };
+export const collections = { people, news, software, publications };

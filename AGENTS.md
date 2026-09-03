@@ -36,6 +36,7 @@ University of Verona and UNC Chapel Hill.
 | Task | Read |
 | --- | --- |
 | Add or update news | `docs/news.md` |
+| Add or update a software record | `docs/software.md` |
 | Add or update publications (then `npm run format:bib`) | `docs/publications.md` |
 | Add, update or remove a team member; add or replace a portrait | `docs/team.md` |
 | Edit the project description, funding statement, partners, links, colours, theme | `docs/site-settings.md` |

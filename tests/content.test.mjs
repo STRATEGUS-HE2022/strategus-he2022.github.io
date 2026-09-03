@@ -15,7 +15,7 @@ import { authorMatchesPerson } from '../src/lib/publications.ts';
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const CONTENT = path.join(ROOT, 'src/content');
 const DATA = path.join(ROOT, 'src/data');
-const COLLECTIONS = ['people', 'news'];
+const COLLECTIONS = ['people', 'news', 'software'];
 const CATEGORIES = ['Project', 'Publication', 'Event', 'Release'];
 const INSTITUTIONS = ['univr', 'unc'];
 const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/;
@@ -86,6 +86,20 @@ test('cross-references point at existing records', () => {
         assert.ok(slugs.people.has(ref), `${label(e)}: ${field} "${ref}" is not a people record`);
       }
     }
+  }
+  for (const e of all.software) {
+    for (const ref of e.data.people ?? []) assert.ok(slugs.people.has(ref), `${label(e)}: people "${ref}" is not a people record`);
+    if (e.data.partOf !== undefined) {
+      assert.ok(slugs.software.has(e.data.partOf), `${label(e)}: partOf "${e.data.partOf}" is not a software record`);
+      assert.notEqual(e.data.partOf, e.slug, `${label(e)}: a record cannot be part of itself`);
+    }
+  }
+});
+
+test('software records cite publications by keys that exist in the bibliography', () => {
+  const keys = new Set(parseBibtex(readFileSync(path.join(DATA, 'publications.bib'), 'utf8')).map((b) => b.key));
+  for (const e of all.software) {
+    for (const key of e.data.publications ?? []) assert.ok(keys.has(key), `${label(e)}: publications key "${key}" is not in publications.bib`);
   }
 });
 
