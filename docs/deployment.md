@@ -24,6 +24,7 @@ which is what CI does.
 | `npm run check` | Astro and TypeScript checks: templates, content schemas, types |
 | `npm test` | Unit tests and content invariants (`node --test`) |
 | `npm run verify` | Repository hygiene and built-site checks (`scripts/verify.mjs`) |
+| `npm run format:bib` | Rewrite `publications.bib` in its canonical layout |
 | `npm run strip-metadata <file…>` | Remove EXIF/GPS/IPTC/XMP from an image, losslessly |
 | `npm run ci` | `check` → `test` → `build` → `verify`, in that order |
 

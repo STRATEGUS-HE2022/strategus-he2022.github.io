@@ -49,6 +49,7 @@ Node.js **24** (see `.nvmrc`; anything from 22.12 works) and npm ≥ 9.
 | `npm run check` | Astro + TypeScript checks (templates, schemas, types) |
 | `npm test` | Unit tests and content invariants |
 | `npm run verify` | Repository hygiene and built-site checks |
+| `npm run format:bib` | Rewrite `publications.bib` in its canonical layout (newest year first, year dividers) |
 | `npm run strip-metadata <file…>` | Remove EXIF/GPS/IPTC/XMP from an image, losslessly |
 | `npm run ci` | Everything CI runs, in order |
 
@@ -73,7 +74,7 @@ src/styles/                tokens.css (design tokens) + base.css (global styles)
 src/lib/                   plain TypeScript helpers (BibTeX, publications, people)
 src/loaders/publications.ts   turns publications.bib into a collection
 public/                    copied verbatim: favicon, .nojekyll
-scripts/                   verify.mjs (CI quality gate), strip-image-metadata.mjs,
+scripts/                   verify.mjs (CI quality gate), format-bib.mjs, strip-image-metadata.mjs,
                            suggest-publications.py (maintainer tool, Python, see docs/publications.md)
 tests/                     unit tests and content invariants (node --test)
 docs/                      the task guides linked above

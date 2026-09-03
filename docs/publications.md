@@ -46,21 +46,35 @@ The entry type decides how the venue is shown: `article` → journal, `inproceed
 
 ### Adding a paper
 
-1. Export the BibTeX from IEEE Xplore, DBLP or the publisher.
-2. Paste it into `src/data/publications.bib` (the file is ordered newest-first for
-   readability; the site sorts by year regardless).
+1. Export the BibTeX from IEEE Xplore, DBLP or the publisher (or take the entry
+   `scripts/suggest-publications.py --bibtex` fetched for you).
+2. Paste it anywhere into `src/data/publications.bib`.
 3. Add the open-access `url` if there is one.
-4. Run `npm run ci`.
+4. Run `npm run format:bib`, then `npm run ci`.
+
+### Keeping the file tidy
+
+`npm run format:bib` rewrites `publications.bib` in one canonical layout, so the file
+reads the same whoever last touched it:
+
+- entries sorted by year, newest first, then by the first author's family name; every year
+  opens with a `% ====` divider;
+- fields in a fixed order (author, title, venue, year, volume, number, pages, month,
+  keywords, identifiers, url…), aligned `=`, values in braces;
+- empty fields (`volume = {}`) and the `abstract`, `file` and `annote` fields dropped;
+- page ranges normalised to `1--8`, a bare `&` escaped as `\&` (never inside a URL or DOI).
+
+Everything else — citation keys, braces protecting acronyms, LaTeX accents — is kept
+exactly as written. A test checks that the committed file is formatted, so `npm run ci`
+tells you when to run it. `%` comments are regenerated: notes about an entry belong in its
+`note` field.
 
 ### Things to fix on paste
 
-- **Ampersands.** Write `\&`, never a bare `&`. A test checks `booktitle`.
-- **Page ranges.** `pages = {1--6}` is correct BibTeX; the site renders the en dash.
 - **HTML entities.** Replace `&amp;` and friends with the real character.
 - **Duplicates.** A preprint and the published version are two entries; keep one,
   normally the published one. Duplicate keys fail the tests.
-- **Abstracts and keywords.** Drop `abstract`, `file` and `annote`; `keywords` is harmless
-  but unused.
+- **Keywords.** Harmless but unused; keep or drop as you like.
 
 ## `publications.overrides.yaml`
 

@@ -36,7 +36,7 @@ University of Verona and UNC Chapel Hill.
 | Task | Read |
 | --- | --- |
 | Add or update news | `docs/news.md` |
-| Add or update publications | `docs/publications.md` |
+| Add or update publications (then `npm run format:bib`) | `docs/publications.md` |
 | Add, update or remove a team member; add or replace a portrait | `docs/team.md` |
 | Edit the project description, funding statement, partners, links, colours, theme | `docs/site-settings.md` |
 | Deployment, GitHub Pages, CI | `docs/deployment.md` |
@@ -92,6 +92,7 @@ and no page nests a `.container`.
 | `src/lib/`, `src/loaders/` | Plain TypeScript helpers (BibTeX, publications, people) |
 | `public/` | Files copied verbatim into the build |
 | `scripts/verify.mjs` | Repository and built-site verification, run by CI |
+| `scripts/format-bib.mjs` | `npm run format:bib`: canonical layout of `publications.bib`; a test checks the file is formatted |
 | `scripts/suggest-publications.py` | Maintainer tool: compares Scholar/OpenAlex with the bibliography and prints what is missing. Never writes |
 | `tests/` | Unit tests and content invariants (`node --test`) |
 | `THIRD_PARTY_NOTICES.md` | Provenance and licences of third-party material. Add an entry before adding an asset you did not make |
