@@ -1,0 +1,194 @@
+/*
+ * Design tokens — the only source of truth for the site's colours, type, spacing and
+ * widths. Components never hard-code a colour or a width; they read a variable from here.
+ *
+ * Colour works in three layers:
+ *   1. the light palette   (--light-*)   the real hex values, defined once
+ *   2. the dark palette    (--dark-*)    the real hex values, defined once
+ *   3. the active theme    (--color-*)   an alias to one of the two palettes
+ *
+ * Only layer 3 is switched; edit a colour in layer 1 or 2 and nothing else changes.
+ * See docs/site-settings.md for the theme behaviour and how to repalette safely.
+ */
+:root {
+  --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /*
+   * Fluid type scale (min → max between 20rem and 80rem viewports).
+   *
+   * These sizes are an accessibility floor, not a taste decision. Running text never
+   * falls below 17px (--text-base floor 1.0625rem) and the smallest step in the system
+   * is 14px (--text-xs), reserved for mono metadata — eyebrows, years, resource links —
+   * and never used for prose. --text-sm is a real 16px, so even a "small" caption sits
+   * at comfortable body size.
+   *
+   * If a layout feels tight, cut content or widen the container — never step type down.
+   */
+  --text-xs: clamp(0.875rem, 0.85rem + 0.12vw, 0.94rem);
+  --text-sm: clamp(1rem, 0.97rem + 0.15vw, 1.06rem);
+  --text-base: clamp(1.0625rem, 1.02rem + 0.2vw, 1.19rem);
+  --text-lg: clamp(1.25rem, 1.18rem + 0.35vw, 1.45rem);
+  --text-xl: clamp(1.45rem, 1.34rem + 0.55vw, 1.75rem);
+  --text-2xl: clamp(1.75rem, 1.55rem + 1vw, 2.3rem);
+  --text-3xl: clamp(2.15rem, 1.8rem + 1.75vw, 3.05rem);
+  --text-4xl: clamp(2.6rem, 2rem + 3vw, 4.25rem);
+
+  /* Line heights, exposed so components stop hard-coding them. All at or above 1.5. */
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-body: 1.6;
+  --leading-prose: 1.7;
+
+  /* Spacing scale. */
+  --space-2xs: clamp(0.25rem, 0.23rem + 0.1vw, 0.31rem);
+  --space-xs: clamp(0.5rem, 0.46rem + 0.2vw, 0.62rem);
+  --space-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.94rem);
+  --space-md: clamp(1rem, 0.93rem + 0.35vw, 1.25rem);
+  --space-lg: clamp(1.5rem, 1.4rem + 0.5vw, 1.9rem);
+  --space-xl: clamp(2rem, 1.8rem + 1vw, 2.75rem);
+  --space-2xl: clamp(3rem, 2.6rem + 2vw, 4.5rem);
+  --space-3xl: clamp(4.5rem, 3.8rem + 3.5vw, 7rem);
+
+  /*
+   * Widths. Long prose is capped at --measure so lines stay readable; structured
+   * sections (lists, grids) use the far wider --container. See .container,
+   * .container--wide and .container--narrow in base.css.
+   */
+  --measure: 66ch;
+  --container: 94rem;
+  --container-wide: 108rem;
+  --container-narrow: 56rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+
+  /*
+   * One rule and one radius. There are no shadow tokens: depth is carried by hairline
+   * rules and by the second paper tone, never by elevation.
+   */
+  --rule: 1px solid var(--color-rule);
+  --radius: 2px;
+
+  /* One duration, one easing. No transforms, no bounce, no reveal-on-scroll. */
+  --duration: 120ms;
+  --ease: ease;
+  --transition-link: color var(--duration) var(--ease), text-decoration-color var(--duration) var(--ease);
+  --transition-control: color var(--duration) var(--ease), border-color var(--duration) var(--ease), background-color var(--duration) var(--ease);
+
+  /*
+   * ---- Palette: light — cool off-white paper, deep navy ink, flame accents ----
+   *
+   * The neutrals are a navy-tinted ramp: ink on paper is 15.8:1, --light-ink-3 is
+   * 5.9:1 on --light-paper-2. The accent is the flame of the STRATEGUS mark. At its own
+   * value (#f3400e) the flame reaches only 3.5:1 as text on paper, so the accent is the
+   * same hue darkened until it clears 4.5:1 on paper (5.6:1), on paper-2 (5.1:1) and on
+   * the 7 % tint (5.1:1). The mark keeps the real flame; see --brand-flame.
+   */
+  --light-paper: #f6f7fb;
+  --light-paper-2: #eaecf5;
+  --light-selection: #fbe3d9;
+  --light-ink: #141a2e;
+  --light-ink-2: #3b4468;
+  --light-ink-3: #5a6383;
+  --light-rule: #d3d8e8;
+  --light-rule-strong: #141a2e;
+  --light-accent: #b8310a;
+  --light-accent-strong: #872406;
+  --light-focus: #b8310a;
+
+  /*
+   * ---- Palette: dark — a lit navy ground, near-white ink, lifted flame accents ----
+   *
+   * The ground is a navy rather than a black so the site still reads as the same
+   * object in both themes. The accent is the flame lifted towards white: 6.8:1 on
+   * paper, 5.6:1 on paper-2, 6.0:1 on the tint. Ink on paper is 12.5:1.
+   */
+  --dark-paper: #1a2b56;
+  --dark-paper-2: #253865;
+  --dark-selection: #6a3a2c;
+  --dark-ink: #eff4ff;
+  --dark-ink-2: #becef0;
+  --dark-ink-3: #97aad1;
+  --dark-rule: #344878;
+  --dark-rule-strong: #d5dff3;
+  --dark-accent: #ff9d73;
+  --dark-accent-strong: #ffcdb8;
+  --dark-focus: #ff9d73;
+
+  /*
+   * The mark's own colours, sampled from it. These are BRAND-ONLY: the interface uses
+   * the adjusted accents above, never these values as text. They are recorded so a
+   * poster or a slide that must sit beside the mark can match it exactly. The dark-theme
+   * variant of the mark repaints the navy arcs in --dark-ink and leaves the flame alone.
+   */
+  --brand-navy: #292572;
+  --brand-flame: #f3400e;
+  /*
+   * The EU emblem is a raster with an opaque white ground and must never be recoloured,
+   * so the plate that carries it matches the file rather than the paper. See .mark-plate
+   * in base.css.
+   */
+  --brand-mark-ground: #ffffff;
+
+  /* ---- Active theme: light ---- */
+  color-scheme: light;
+  --color-paper: var(--light-paper);
+  --color-paper-2: var(--light-paper-2);
+  --color-selection: var(--light-selection);
+  --color-ink: var(--light-ink);
+  --color-ink-2: var(--light-ink-2);
+  --color-ink-3: var(--light-ink-3);
+  --color-rule: var(--light-rule);
+  --color-rule-strong: var(--light-rule-strong);
+  --color-accent: var(--light-accent);
+  --color-accent-strong: var(--light-accent-strong);
+  --color-focus: var(--light-focus);
+}
+
+/*
+ * Dark theme, twice over — the two ways a visitor can end up in it. The blocks are
+ * identical aliasing, no colour values: the system preference (unless the visitor has
+ * explicitly asked for light), and an explicit choice stored in localStorage and applied
+ * to <html data-theme> before first paint by the inline script in BaseLayout.astro.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --color-paper: var(--dark-paper);
+    --color-paper-2: var(--dark-paper-2);
+    --color-selection: var(--dark-selection);
+    --color-ink: var(--dark-ink);
+    --color-ink-2: var(--dark-ink-2);
+    --color-ink-3: var(--dark-ink-3);
+    --color-rule: var(--dark-rule);
+    --color-rule-strong: var(--dark-rule-strong);
+    --color-accent: var(--dark-accent);
+    --color-accent-strong: var(--dark-accent-strong);
+    --color-focus: var(--dark-focus);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-paper: var(--dark-paper);
+  --color-paper-2: var(--dark-paper-2);
+  --color-selection: var(--dark-selection);
+  --color-ink: var(--dark-ink);
+  --color-ink-2: var(--dark-ink-2);
+  --color-ink-3: var(--dark-ink-3);
+  --color-rule: var(--dark-rule);
+  --color-rule-strong: var(--dark-rule-strong);
+  --color-accent: var(--dark-accent);
+  --color-accent-strong: var(--dark-accent-strong);
+  --color-focus: var(--dark-focus);
+}
+
+/*
+ * The accent's derived surfaces: a 7% tint for a panel or a band, 14% for its hover, and
+ * a hairline in the accent hue — strong enough to identify, quiet enough to stay a rule.
+ */
+:root {
+  --color-tint: color-mix(in oklab, var(--color-accent) 7%, var(--color-paper));
+  --color-tint-strong: color-mix(in oklab, var(--color-accent) 14%, var(--color-paper));
+  --rule-accent: 1px solid color-mix(in oklab, var(--color-accent) 45%, var(--color-rule));
+}

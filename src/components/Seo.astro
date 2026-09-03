@@ -1,0 +1,77 @@
+---
+/**
+ * <head> metadata: title, description, canonical URL, Open Graph/Twitter cards
+ * and a small amount of homepage structured data for search engines.
+ */
+import { site } from '../data/site.ts';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Open Graph type. */
+  type?: 'website' | 'article';
+  /** Path (from public/) or absolute URL of a preview image. */
+  image?: string;
+  /** Exclude from search engines (the 404 page). */
+  noindex?: boolean;
+  /** Override the canonical URL (defaults to the current page). */
+  canonical?: string;
+}
+
+const { title, description = site.description, type = 'website', image = site.brand.ogImage, noindex = false, canonical } = Astro.props;
+
+const isHome = Astro.url.pathname === '/';
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+const fullTitle = isHome ? site.title : `${title} · ${site.shortName}`;
+const imageUrl = image ? new URL(image, Astro.site).href : undefined;
+const homeUrl = new URL('/', Astro.site).href;
+const projectId = `${homeUrl}#project`;
+const websiteId = `${homeUrl}#website`;
+const structuredData = isHome
+  ? {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebSite',
+          '@id': websiteId,
+          url: homeUrl,
+          name: site.title,
+          description: site.description,
+          inLanguage: site.locale,
+          publisher: { '@id': projectId },
+        },
+        {
+          '@type': 'ResearchProject',
+          '@id': projectId,
+          name: site.name,
+          alternateName: site.shortName,
+          url: homeUrl,
+          description: site.description,
+          identifier: site.funding.grant,
+          foundingDate: site.funding.start,
+          sameAs: [site.links.github, site.funding.cordisUrl],
+          funder: { '@type': 'Organization', name: 'European Union', url: 'https://european-union.europa.eu/' },
+          parentOrganization: site.partners.map((partner) => ({
+            '@type': 'CollegeOrUniversity',
+            name: partner.name,
+            url: partner.url,
+          })),
+        },
+      ],
+    }
+  : undefined;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+{noindex && <meta name="robots" content="noindex, follow" />}
+<meta property="og:site_name" content={site.title} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:locale" content="en_GB" />
+{imageUrl && <meta property="og:image" content={imageUrl} />}
+<meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+{structuredData && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}

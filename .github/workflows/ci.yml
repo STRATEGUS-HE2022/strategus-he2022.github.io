@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install (exact lockfile)
+        run: npm ci
+      - name: Astro and TypeScript checks
+        run: npm run check
+      - name: Unit tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+      - name: Verify repository and build
+        run: npm run verify

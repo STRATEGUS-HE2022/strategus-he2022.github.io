@@ -1,0 +1,38 @@
+---
+/** Editorial section heading: mono eyebrow, serif title, optional "more" link. */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  moreHref?: string;
+  moreLabel?: string;
+  /** Heading level for the title (defaults to h2). */
+  level?: 2 | 3;
+  id?: string;
+}
+
+const { eyebrow, title, moreHref, moreLabel = 'See all', level = 2, id } = Astro.props;
+const Tag = `h${level}` as 'h2' | 'h3';
+---
+
+<div class="section-heading">
+  <div>
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <Tag id={id}>{title}</Tag>
+  </div>
+  {moreHref && <a class="more" href={moreHref}>{moreLabel}</a>}
+</div>
+
+<style>
+  .section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-heading .eyebrow {
+    margin-bottom: var(--space-2xs);
+  }
+</style>

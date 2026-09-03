@@ -1,0 +1,278 @@
+---
+/**
+ * Home page: the project identity, what the project is, the three most recent news items,
+ * and who funds it. Bands alternate paper / paper-2 so the page reads as plates rather
+ * than one white sheet.
+ */
+import euEmblem from '../assets/images/eu-msca.png';
+import markDark from '../assets/images/strategus-mark-dark.png';
+import markLight from '../assets/images/strategus-mark-light.png';
+import NewsList from '../components/NewsList.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { Content as About } from '../content/home.md';
+import { site } from '../data/site.ts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getNews } from '../lib/content.ts';
+
+const news = (await getNews()).slice(0, 3);
+const period = `${site.funding.start.slice(0, 4)} – ${site.funding.end.slice(0, 4)}`;
+---
+
+<BaseLayout title={site.title} description={site.description}>
+  <section class="hero page-open container">
+    <p class="eyebrow">{site.funding.programme} · {site.funding.action}</p>
+    <div class="hero__mark" role="img" aria-label="The STRATEGUS mark: a flame inside two arcs">
+      <img class="hero__logo hero__logo--light" src={markLight.src} width={markLight.width} height={markLight.height} alt="" aria-hidden="true" />
+      <img class="hero__logo hero__logo--dark" src={markDark.src} width={markDark.width} height={markDark.height} alt="" aria-hidden="true" />
+    </div>
+    <div class="hero__content">
+      <h1 class="hero__title">{site.shortName}</h1>
+      <p class="hero__name">{site.name}</p>
+      <p class="hero__lede">{site.tagline}</p>
+      <nav class="hero__links" aria-label="Start here">
+        <a class="more" href="/news/">News</a>
+        <a class="more" href="/publications/">Publications</a>
+        <a class="more" href="/team/">Team</a>
+      </nav>
+    </div>
+  </section>
+
+  <div class="band band--sunken">
+    <section class="section container" aria-labelledby="home-about">
+      <SectionHeading eyebrow="The project" title="About STRATEGUS" id="home-about" />
+      <div class="prose">
+        <About />
+      </div>
+    </section>
+  </div>
+
+  {/* News changes week to week; it sits between the two fixed plates. */}
+  {news.length > 0 && (
+    <div class="band">
+      <section class="section container" aria-labelledby="home-news">
+        <SectionHeading eyebrow="News" title="Recent news" id="home-news" moreHref="/news/" moreLabel="All news" />
+        <NewsList items={news} />
+      </section>
+    </div>
+  )}
+
+  <div class="band band--sunken">
+    <section class="section container" aria-labelledby="home-funding">
+      <SectionHeading eyebrow="Funding and partners" title="A Marie Skłodowska-Curie Global Fellowship" id="home-funding" />
+      <div class="funding">
+        <div class="funding__grant">
+          <p class="mark-plate funding__emblem">
+            <img src={euEmblem.src} width={euEmblem.width} height={euEmblem.height} alt="Funded by the European Union — Marie Skłodowska-Curie Actions" />
+          </p>
+          <p>{site.funding.acknowledgement}</p>
+          <p class="funding__disclaimer">{site.funding.disclaimer}</p>
+          <dl class="funding__facts">
+            <div><dt class="eyebrow">Call</dt><dd>{site.funding.call}</dd></div>
+            <div><dt class="eyebrow">Grant agreement</dt><dd><a href={site.funding.cordisUrl}>{site.funding.grant}</a></dd></div>
+            <div><dt class="eyebrow">Period</dt><dd>{period}</dd></div>
+          </dl>
+        </div>
+        <ol class="partners">
+          {site.partners.map((partner) => (
+            <li class="partner">
+              <p class="partner__role">{partner.role}</p>
+              <div>
+                <h3 class="partner__name"><a href={partner.url}>{partner.name}</a></h3>
+                <p class="partner__unit">{partner.unit}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Padding comes from `.page-open` in base.css — the hero is this page's opening block. */
+  .hero {
+    display: grid;
+    gap: var(--space-lg) var(--space-2xl);
+  }
+
+  .hero__mark {
+    min-width: 0;
+  }
+
+  .hero__logo {
+    width: min(100%, 16rem);
+    height: auto;
+  }
+
+  .hero__logo--dark {
+    display: none;
+  }
+
+  :global(:root[data-theme='dark']) .hero__logo--light {
+    display: none;
+  }
+
+  :global(:root[data-theme='dark']) .hero__logo--dark {
+    display: block;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .hero__logo--light {
+      display: none;
+    }
+
+    :global(:root:not([data-theme='light'])) .hero__logo--dark {
+      display: block;
+    }
+  }
+
+  .hero__content {
+    display: grid;
+    gap: var(--space-md);
+    align-content: start;
+  }
+
+  /* Size and measure come from `.page-open h1`; only the weight is the hero's own. */
+  .hero__title {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .hero__name {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+  }
+
+  .hero__lede {
+    font-size: var(--text-xl);
+    line-height: 1.4;
+    max-width: 52ch;
+    color: var(--color-ink-2);
+  }
+
+  .hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md) var(--space-lg);
+    margin-top: var(--space-xs);
+  }
+
+  @media (min-width: 56rem) {
+    .hero {
+      grid-template-columns: minmax(12rem, 0.5fr) minmax(26rem, 1.5fr);
+      align-items: start;
+    }
+
+    .hero > .eyebrow {
+      grid-column: 1 / -1;
+    }
+
+    .hero__mark {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .hero__content {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+
+  .funding {
+    display: grid;
+    gap: var(--space-xl) var(--space-2xl);
+  }
+
+  @media (min-width: 56rem) {
+    .funding {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+  }
+
+  .funding__grant {
+    display: grid;
+    gap: var(--space-md);
+    max-width: var(--measure);
+  }
+
+  .funding__emblem {
+    width: fit-content;
+  }
+
+  .funding__emblem img {
+    height: 5rem;
+    width: auto;
+  }
+
+  .funding__disclaimer {
+    font-size: var(--text-sm);
+    color: var(--color-ink-3);
+  }
+
+  .funding__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-xl);
+    margin-top: var(--space-xs);
+  }
+
+  .funding__facts > div {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .funding__facts dd {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .partners {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xl);
+    align-content: start;
+  }
+
+  .partner {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: var(--space-sm);
+    padding-top: var(--space-md);
+    /* The 2px rule opening a partner block is one of the places colour is allowed: it is
+       identity, and the partner's role sits right beside it. */
+    border-top: 2px solid var(--color-accent);
+  }
+
+  .partner__role {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  .partner__name {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-xs);
+  }
+
+  .partner__name a {
+    text-decoration: none;
+  }
+
+  .partner__name a:hover {
+    text-decoration: underline;
+  }
+
+  .partner__unit {
+    color: var(--color-ink-2);
+  }
+
+  @media (max-width: 40rem) {
+    .partner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

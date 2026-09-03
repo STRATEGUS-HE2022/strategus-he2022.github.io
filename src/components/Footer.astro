@@ -1,0 +1,133 @@
+---
+/** Institutional footer: funding acknowledgement, partners, useful links, licence. */
+import euEmblem from '../assets/images/eu-msca.png';
+import { site } from '../data/site.ts';
+
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div>
+      <p class="footer__name">{site.shortName}</p>
+      <p class="footer__long">{site.name}</p>
+      <ul class="footer__partners">
+        {site.partners.map((partner) => (
+          <li><a href={partner.url}>{partner.name}</a><br /><span class="footer__unit">{partner.unit}</span></li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h2 class="footer__heading">Funding</h2>
+      <p class="mark-plate footer__emblem">
+        <img src={euEmblem.src} width={euEmblem.width} height={euEmblem.height} alt="Funded by the European Union — Marie Skłodowska-Curie Actions" />
+      </p>
+      <p class="footer__funding">
+        {site.funding.acknowledgement}
+        {' '}<a href={site.funding.cordisUrl}>Project record on CORDIS</a>.
+      </p>
+    </div>
+    <div>
+      <h2 class="footer__heading">Links</h2>
+      <ul class="footer__links">
+        <li><a href="/news/">News</a></li>
+        <li><a href="/publications/">Publications</a></li>
+        <li><a href="/publications.bib">Bibliography (BibTeX)</a></li>
+        <li><a href="/team/">Team</a></li>
+        <li><a href={site.links.github}>GitHub</a></li>
+        <li><a href={`mailto:${site.links.email}`}>{site.links.email}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer__colophon">
+    <p class="meta">
+      © {year} {site.shortName}. Content licensed under <a href={site.licence.url}>{site.licence.shortName}</a>.
+    </p>
+  </div>
+</footer>
+
+<style>
+  /*
+   * The footer is the last band: paper-2 closes the page, so the alternation reads all the
+   * way down instead of the page fading out on the same white as its content. The
+   * rule-strong edge still marks the boundary where a sunken section abuts it.
+   */
+  .footer {
+    background: var(--color-paper-2);
+    border-top: 1px solid var(--color-rule-strong);
+    padding-block: var(--space-xl) var(--space-lg);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  .footer__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-lg) var(--space-xl);
+  }
+
+  .footer__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--color-ink);
+  }
+
+  .footer__long {
+    color: var(--color-ink);
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer__partners {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .footer__unit {
+    color: var(--color-ink-3);
+  }
+
+  .footer__heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+    margin-bottom: var(--space-xs);
+  }
+
+  .footer__emblem {
+    width: fit-content;
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer__emblem img {
+    height: 3.75rem;
+    width: auto;
+  }
+
+  .footer__funding {
+    max-width: 44ch;
+  }
+
+  .footer__links {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .footer__links a {
+    overflow-wrap: anywhere;
+  }
+
+  .footer__colophon {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: var(--rule);
+  }
+</style>

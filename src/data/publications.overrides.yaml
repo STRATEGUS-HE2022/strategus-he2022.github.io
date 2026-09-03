@@ -1,0 +1,8 @@
+# Extras for individual publications, keyed by BibTeX key (see docs/publications.md).
+#   featured: true          -> marks the entry as selected (no page reads it today)
+#   people: [slug]          -> link the entry to a team member when name matching fails
+#   pdf: /documents/x.pdf   -> a hosted PDF, when the licence allows it
+#   code: https://...       -> the code repository
+#   note: Best paper award  -> short free-text note
+#   hidden: true            -> keep the entry but never show or export it
+# Everything else about a publication comes from publications.bib.

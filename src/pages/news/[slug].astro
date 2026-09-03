@@ -1,0 +1,51 @@
+---
+import { getEntry, render } from 'astro:content';
+import Portrait from '../../components/Portrait.astro';
+import DetailLayout from '../../layouts/DetailLayout.astro';
+import { getNews, type NewsItem } from '../../lib/content.ts';
+import { formatDate } from '../../lib/format.ts';
+
+export async function getStaticPaths() {
+  const news = await getNews();
+  return news.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: NewsItem;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const author = d.author ? await getEntry(d.author) : undefined;
+const { Content } = await render(entry);
+const eyebrow = `${formatDate(d.date)} · ${d.category}`;
+---
+
+<DetailLayout title={d.title} eyebrow={eyebrow} lede={d.summary} type="article" back={{ href: '/news/', label: 'All news' }}>
+  {author && (
+    <p slot="header" class="byline">
+      <Portrait name={author.data.name} photo={author.data.photo} size={32} variant="avatar" />
+      <span>By <a href={`/team/#${author.id}`}>{author.data.name}</a></span>
+    </p>
+  )}
+
+  <section class="section prose article__body">
+    <Content />
+  </section>
+</DetailLayout>
+
+<style>
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  /* A news item reads a little wider than the 66ch prose measure. */
+  .article__body {
+    max-width: 72ch;
+  }
+</style>

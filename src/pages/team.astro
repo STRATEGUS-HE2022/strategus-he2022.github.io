@@ -1,0 +1,118 @@
+---
+/**
+ * The team: one section per person, in `order`. Each section has the person's slug as its
+ * id, which is where author names in the publication list and news bylines point.
+ */
+import { render } from 'astro:content';
+import Portrait from '../components/Portrait.astro';
+import { partnerOf, site } from '../data/site.ts';
+import PageLayout from '../layouts/PageLayout.astro';
+import { getPeople } from '../lib/content.ts';
+
+const people = await getPeople();
+const members = await Promise.all(
+  people.map(async (person) => {
+    const d = person.data;
+    const { Content } = await render(person);
+    const githubUrl = d.github ? (d.github.startsWith('http') ? d.github : `https://github.com/${d.github}`) : undefined;
+    const links = [
+      d.website && { label: 'Website', href: d.website },
+      d.orcid && { label: 'ORCID', href: `https://orcid.org/${d.orcid}` },
+      d.scholar && { label: 'Google Scholar', href: d.scholar },
+      d.researchgate && { label: 'ResearchGate', href: d.researchgate },
+      githubUrl && { label: 'GitHub', href: githubUrl },
+      d.twitter && { label: 'Twitter', href: d.twitter },
+      d.email && { label: 'E-mail', href: `mailto:${d.email}` },
+    ].filter((x): x is { label: string; href: string } => Boolean(x));
+    return { person, Content, links, partner: partnerOf(d.institution) };
+  }),
+);
+---
+
+<PageLayout
+  title="Team"
+  eyebrow={site.shortName}
+  lede="The Marie Skłodowska-Curie fellow and the two supervisors, at the University of Verona and at the University of North Carolina at Chapel Hill."
+  description={`The ${site.shortName} team: the fellow and the supervisors at the University of Verona and UNC Chapel Hill.`}
+>
+  {members.map(({ person, Content, links, partner }) => (
+    <section class="member section" id={person.id} aria-labelledby={`member-${person.id}`}>
+      <div class="member__portrait">
+        <Portrait name={person.data.name} photo={person.data.photo} size={96} variant="avatar" />
+      </div>
+      <div class="member__body">
+        <p class="eyebrow">{person.data.role}</p>
+        <h2 id={`member-${person.id}`} class="member__name">{person.data.name}</h2>
+        <p class="member__affiliation">
+          {person.data.affiliation}, <a href={partner.url}>{partner.name}</a>
+        </p>
+        <div class="prose member__bio">
+          <Content />
+        </div>
+        {links.length > 0 && (
+          <ul class="member__links" aria-label={`Profiles of ${person.data.name}`}>
+            {links.map((link) => (
+              <li><a href={link.href}>{link.label}</a></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  ))}
+</PageLayout>
+
+<style>
+  .member {
+    display: grid;
+    grid-template-columns: minmax(6rem, 8rem) 1fr;
+    gap: var(--space-md) var(--space-xl);
+    /* Anchored from author names elsewhere: leave room for the masthead when jumping. */
+    scroll-margin-top: var(--space-lg);
+  }
+
+  .member__body {
+    display: grid;
+    gap: var(--space-sm);
+    min-width: 0;
+  }
+
+  .member__name {
+    font-size: var(--text-2xl);
+  }
+
+  .member__affiliation {
+    color: var(--color-ink-2);
+  }
+
+  .member__bio {
+    margin-top: var(--space-xs);
+  }
+
+  .member__links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    margin-top: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .member__links a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-rule-strong);
+  }
+
+  .member__links a:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  @media (max-width: 40rem) {
+    .member {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

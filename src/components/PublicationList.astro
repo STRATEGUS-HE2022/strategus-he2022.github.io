@@ -1,0 +1,172 @@
+---
+/**
+ * Reference list grouped by year. Each item: title (linked to DOI/URL when known),
+ * authors (team members linked to their section of the Team page), venue line and
+ * resource links.
+ */
+import type { Person } from '../lib/content.ts';
+import { authorMatchesPerson, formatVenueLine, groupByYear, type Publication } from '../lib/publications.ts';
+
+interface Props {
+  publications: Publication[];
+  /** Known people, used to link author names to the Team page. */
+  people?: Person[];
+  /** Heading level used for the year headings. */
+  headingLevel?: 2 | 3;
+  /** Prefix for year anchors (e.g. "year" → id="year-2024"). */
+  anchorPrefix?: string;
+}
+
+const { publications, people = [], headingLevel = 2, anchorPrefix } = Astro.props;
+const YearTag = `h${headingLevel}` as 'h2' | 'h3';
+const groups = groupByYear(publications);
+
+function personFor(author: string): Person | undefined {
+  return people.find((p) => p.data.name === author || authorMatchesPerson(author, { name: p.data.name, aliases: p.data.aliases }));
+}
+
+function primaryLink(p: Publication): string | undefined {
+  if (p.doi) return `https://doi.org/${p.doi}`;
+  return p.url ?? p.dblp ?? p.pdf;
+}
+
+function searchText(p: Publication): string {
+  return [p.title, p.authors.join(' '), p.venue ?? '', String(p.year)].join(' ').toLowerCase();
+}
+---
+
+<div class="publications">
+  {groups.map(({ year, items }) => (
+    <section class="pub-year" data-pub-year>
+      <YearTag class="pub-year__heading" id={anchorPrefix ? `${anchorPrefix}-${year}` : undefined}>{year}</YearTag>
+      <ol class="pub-list">
+        {items.map((p) => {
+          const link = primaryLink(p);
+          const venue = formatVenueLine(p);
+          return (
+            <li class="pub" data-pub data-search={searchText(p)}>
+              <p class="pub__title">
+                {link ? <a href={link}>{p.title}</a> : p.title}
+              </p>
+              <p class="pub__authors">
+                {p.authors.map((author, index) => {
+                  const person = personFor(author);
+                  const separator = index < p.authors.length - 1 ? ', ' : '';
+                  return (
+                    <span>
+                      {person ? <a href={`/team/#${person.id}`}>{author}</a> : author}{separator}
+                    </span>
+                  );
+                })}
+              </p>
+              {venue && <p class="pub__venue">{venue}{p.note ? ` — ${p.note}` : ''}</p>}
+              <p class="pub__links">
+                {p.doi && <a href={`https://doi.org/${p.doi}`}>DOI</a>}
+                {p.dblp && <a href={p.dblp}>DBLP</a>}
+                {/* A `url` that is not the DOI is the open-access copy (institutional repository, arXiv). */}
+                {p.url && <a href={p.url}>Open access</a>}
+                {p.pdf && <a href={p.pdf}>PDF</a>}
+                {p.code && <a href={p.code}>Code</a>}
+                {p.venueKind === 'preprint' && <span class="pub__tag">preprint</span>}
+              </p>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  ))}
+</div>
+
+<style>
+  .pub-year {
+    display: grid;
+    grid-template-columns: minmax(5rem, 8rem) 1fr;
+    gap: var(--space-sm) var(--space-xl);
+    padding-block: var(--space-md);
+    border-top: var(--rule);
+  }
+
+  .pub-year:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .pub-year__heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--color-ink-3);
+    position: sticky;
+    top: var(--space-md);
+    align-self: start;
+  }
+
+  .pub-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .pub {
+    max-width: 72ch;
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .pub__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    line-height: 1.3;
+  }
+
+  .pub__title a {
+    text-decoration: none;
+  }
+
+  .pub__title a:hover {
+    text-decoration: underline;
+  }
+
+  .pub__authors {
+    color: var(--color-ink-2);
+  }
+
+  .pub__venue {
+    font-style: italic;
+    color: var(--color-ink-2);
+  }
+
+  .pub__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pub__links a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-rule-strong);
+  }
+
+  .pub__links a:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .pub__tag {
+    color: var(--color-ink-3);
+  }
+
+  @media (max-width: 40rem) {
+    .pub-year {
+      grid-template-columns: 1fr;
+    }
+
+    .pub-year__heading {
+      position: static;
+    }
+  }
+</style>

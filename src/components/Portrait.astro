@@ -1,0 +1,64 @@
+---
+/** Person portrait: optimised image when available, otherwise a monogram. */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  name: string;
+  photo?: ImageMetadata | undefined;
+  /** Rendered width in CSS pixels; the height follows the variant's ratio. */
+  size?: number;
+  /** `portrait` is the 4:5 editorial frame; `avatar` is the square byline thumbnail. */
+  variant?: 'portrait' | 'avatar';
+}
+
+/** Height per unit of width. Portraits are 4:5; the tiny byline avatar stays 1:1. */
+const RATIO = { portrait: 5 / 4, avatar: 1 } as const;
+
+const { name, photo, size = 96, variant = 'portrait' } = Astro.props;
+const box = `--portrait-width: ${size}px; --portrait-height: ${Math.round(size * RATIO[variant])}px`;
+const initials = name
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => part[0]?.toUpperCase() ?? '')
+  .join('');
+---
+
+{photo ? (
+  <Image
+    class="portrait"
+    src={photo}
+    alt={`Portrait of ${name}`}
+    width={size}
+    widths={[size, size * 2]}
+    sizes={`${size}px`}
+    style={box}
+  />
+) : (
+  <span class="portrait portrait--monogram" style={box} aria-hidden="true">{initials}</span>
+)}
+
+<style>
+  .portrait {
+    width: var(--portrait-width);
+    height: var(--portrait-height);
+    border-radius: var(--radius);
+    /* The source files are never cropped: the frame is presentation only. */
+    object-fit: cover;
+    /* Slightly above centre — a head sits above the middle of a head-and-shoulders shot. */
+    object-position: 50% 35%;
+    background: var(--color-paper-2);
+    flex: none;
+  }
+
+  .portrait--monogram {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: calc(var(--portrait-width) * 0.36);
+    color: var(--color-ink-3);
+    border: var(--rule);
+  }
+</style>

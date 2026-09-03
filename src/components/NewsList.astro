@@ -1,0 +1,90 @@
+---
+/** Chronological list of news: date in the margin, title and summary. */
+import type { NewsItem } from '../lib/content.ts';
+import { formatDate, isoDate } from '../lib/format.ts';
+
+interface Props {
+  items: NewsItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<ol class="news">
+  {items.map((item) => (
+    <li class="news-item">
+      <p class="news-item__date">
+        <time datetime={isoDate(item.data.date)}>{formatDate(item.data.date)}</time>
+        {item.data.category && <span class="news-item__category">{item.data.category}</span>}
+      </p>
+      <div>
+        <h3 class="news-item__title"><a href={`/news/${item.id}/`}>{item.data.title}</a></h3>
+        <p class="news-item__summary">{item.data.summary}</p>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .news {
+    list-style: none;
+    padding: 0;
+  }
+
+  .news-item {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) 1fr;
+    gap: var(--space-xs) var(--space-xl);
+    padding-block: var(--space-md);
+    border-top: var(--rule);
+  }
+
+  .news-item:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .news-item__date {
+    display: grid;
+    gap: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-ink-3);
+  }
+
+  .news-item__category {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+  }
+
+  .news-item__title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-xs);
+  }
+
+  .news-item__title a {
+    text-decoration: none;
+  }
+
+  .news-item__title a:hover {
+    text-decoration: underline;
+  }
+
+  .news-item__summary {
+    max-width: var(--measure);
+    color: var(--color-ink-2);
+  }
+
+  @media (max-width: 40rem) {
+    .news-item {
+      grid-template-columns: 1fr;
+    }
+
+    .news-item__date {
+      display: flex;
+      gap: var(--space-md);
+    }
+  }
+</style>

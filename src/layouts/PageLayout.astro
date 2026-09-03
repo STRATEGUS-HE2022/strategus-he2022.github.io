@@ -1,0 +1,68 @@
+---
+/**
+ * Standard inner page: one opening block (optional eyebrow, H1 title, optional lede,
+ * optional extra header content) followed by the page's own content.
+ *
+ * The opening carries its own `.container` and takes its spacing from the single
+ * `.page-open` rule in base.css. Never wrap it in another `.container`, and never give it
+ * padding here — see the page contract in AGENTS.md.
+ */
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  eyebrow?: string;
+  lede?: string;
+  type?: 'website' | 'article';
+  image?: string;
+  /** Page width: `wide` for a directory or grid, `narrow` for long-form reading. */
+  width?: 'default' | 'wide' | 'narrow';
+  /**
+   * Do not wrap the content in a `.container`; the page supplies its own.
+   *
+   * A `.band` is full-bleed, so it cannot live inside a container — which means a page that
+   * alternates bands has to own the width itself, putting `.container` *inside* each band.
+   * Pass `bleed` and do exactly that. The opening still brings its own container, so the
+   * page contract holds either way, and a bleed page must repeat `container--wide` inside
+   * its bands when the opening is `wide`.
+   */
+  bleed?: boolean;
+}
+
+const { title, description, eyebrow, lede, type, image, width = 'default', bleed = false } = Astro.props;
+// The width travels with both blocks, so the title lines up with the content below it.
+const container = ['container', width !== 'default' && `container--${width}`];
+---
+
+<BaseLayout title={title} description={description ?? lede} type={type} image={image}>
+  <header class:list={['page-open', 'page-header', ...container]}>
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    <slot name="header" />
+  </header>
+  {bleed ? (
+    <slot />
+  ) : (
+    <div class:list={container}>
+      <slot />
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  /*
+   * Spacing only — the padding is `.page-open` and the title's size and measure are
+   * `.page-open h1`, both in base.css so every page opening on the site is identical.
+   * The eyebrow sits closer to the title than the lede does, because it labels it.
+   */
+  .page-header > .eyebrow {
+    margin-bottom: var(--space-2xs);
+  }
+
+  .page-header > h1:not(:last-child),
+  .page-header > .lede:not(:last-child) {
+    margin-bottom: var(--space-sm);
+  }
+</style>

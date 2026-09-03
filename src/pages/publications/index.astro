@@ -1,0 +1,104 @@
+---
+import EmptyState from '../../components/EmptyState.astro';
+import PublicationList from '../../components/PublicationList.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getPeople, getPublications, publicationData } from '../../lib/content.ts';
+import { site } from '../../data/site.ts';
+
+const entries = await getPublications();
+const publications = publicationData(entries);
+const people = await getPeople();
+const years = publications.map((p) => p.year);
+const span = years.length > 0 ? `${Math.min(...years)}–${Math.max(...years)}` : '';
+const lede =
+  publications.length > 0
+    ? `${publications.length} publications, ${span}, produced within the ${site.shortName} project. Team members' names link to their profile.`
+    : undefined;
+---
+
+<PageLayout title="Publications" eyebrow={site.shortName} lede={lede} description={`Publications of the ${site.shortName} project.`}>
+  <div slot="header" class="tools">
+    <a class="more" href="/publications.bib">Download BibTeX</a>
+    <form class="filter" hidden data-pub-filter role="search">
+      <label class="visually-hidden" for="pub-query">Filter publications</label>
+      <input id="pub-query" type="search" name="q" placeholder="Filter by title, author, venue or year" autocomplete="off" />
+      <p class="filter__count meta" data-pub-count aria-live="polite"></p>
+    </form>
+  </div>
+
+  {publications.length === 0 ? (
+    <EmptyState message="The bibliography has not been published yet." />
+  ) : (
+    <div class="list" data-pub-list>
+      <PublicationList publications={publications} people={people} headingLevel={2} anchorPrefix="year" />
+      <p class="none meta" data-pub-none hidden>No publications match this filter.</p>
+    </div>
+  )}
+</PageLayout>
+
+<script>
+  // Progressive enhancement: client-side text filter over the rendered list.
+  // Without JavaScript the full list is shown and the form stays hidden.
+  const form = document.querySelector<HTMLFormElement>('[data-pub-filter]');
+  const list = document.querySelector<HTMLElement>('[data-pub-list]');
+  if (form && list) {
+    const input = form.querySelector<HTMLInputElement>('input');
+    const count = form.querySelector<HTMLElement>('[data-pub-count]');
+    const none = list.querySelector<HTMLElement>('[data-pub-none]');
+    const items = Array.from(list.querySelectorAll<HTMLElement>('[data-pub]'));
+    const groups = Array.from(list.querySelectorAll<HTMLElement>('[data-pub-year]'));
+    const apply = () => {
+      const terms = (input?.value ?? '').toLowerCase().split(/\s+/).filter(Boolean);
+      let visible = 0;
+      for (const item of items) {
+        const text = item.dataset.search ?? '';
+        const show = terms.every((t) => text.includes(t));
+        item.hidden = !show;
+        if (show) visible++;
+      }
+      for (const group of groups) {
+        group.hidden = !Array.from(group.querySelectorAll<HTMLElement>('[data-pub]')).some((i) => !i.hidden);
+      }
+      if (none) none.hidden = visible > 0;
+      if (count) count.textContent = terms.length ? `${visible} of ${items.length} shown` : '';
+    };
+    form.hidden = false;
+    form.addEventListener('submit', (event) => event.preventDefault());
+    input?.addEventListener('input', apply);
+  }
+</script>
+
+<style>
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md) var(--space-xl);
+    margin-top: var(--space-sm);
+  }
+
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    flex: 1 1 20rem;
+  }
+
+  .filter input {
+    flex: 1 1 16rem;
+    max-width: 28rem;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-rule-strong);
+    border-radius: var(--radius);
+    background: var(--color-paper);
+  }
+
+  .list {
+    padding-block: var(--space-lg);
+  }
+
+  .none {
+    padding-block: var(--space-lg);
+  }
+</style>

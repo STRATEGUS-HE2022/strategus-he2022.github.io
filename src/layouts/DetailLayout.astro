@@ -1,0 +1,159 @@
+---
+/**
+ * The shared frame for a single-entity page — today a news item. A page supplies its
+ * opening (through PageLayout), its main column and, optionally, a metadata sidebar. It
+ * supplies no frame: a second entity type is a data mapping, not a new layout.
+ *
+ * The opening comes from PageLayout, so the page contract in AGENTS.md holds unchanged:
+ * one `.page-open` block carrying its own `.container`, and nothing above it.
+ */
+import PageLayout from './PageLayout.astro';
+
+export interface Fact {
+  label: string;
+  value: string;
+  /** ISO date, when the value is one — renders a machine-readable <time>. */
+  datetime?: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  eyebrow?: string;
+  lede?: string;
+  type?: 'website' | 'article';
+  image?: string;
+  /**
+   * Language of the main column, when the entity is not in the site's language. The
+   * sidebar is left in the document language, because its labels are always English.
+   */
+  lang?: string;
+  /** Short factual rows shown as a tinted strip under the lede — a period, a status. */
+  facts?: Fact[];
+  /** Optional "back to the index" link, closing the main column. */
+  back?: { href: string; label: string };
+}
+
+const { title, description, eyebrow, lede, type, image, lang, facts = [], back } = Astro.props;
+const hasAside = Astro.slots.has('aside');
+---
+
+<PageLayout title={title} description={description} eyebrow={eyebrow} lede={lede} type={type} image={image}>
+  <Fragment slot="header">
+    {facts.length > 0 && (
+      <p class="facts tint">
+        {facts.map((fact) => (
+          <span>
+            <span class="eyebrow">{fact.label}</span>
+            {fact.datetime ? <time datetime={fact.datetime}>{fact.value}</time> : fact.value}
+          </span>
+        ))}
+      </p>
+    )}
+    <slot name="header" />
+  </Fragment>
+
+  <div class="layout">
+    <div class="main" lang={lang}>
+      <slot />
+      {back && (
+        <p class="back"><a href={back.href}>← {back.label}</a></p>
+      )}
+    </div>
+    {hasAside && (
+      <aside class="aside">
+        <slot name="aside" />
+      </aside>
+    )}
+  </div>
+</PageLayout>
+
+<style>
+  /*
+   * Prose left, metadata right, stacked below 60rem. The main column is `1fr` rather than
+   * capped at `--measure`: running text is capped by `.prose` instead.
+   */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+    gap: var(--space-xl) var(--space-2xl);
+    align-items: start;
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  /*
+   * Slotted content belongs to the page, not to this component, so it carries the page's
+   * scope and not this one's. `:global()` is what lets these rules reach it while staying
+   * anchored to this layout's own `.main` and `.aside`.
+   */
+  .main > :global(.section) {
+    padding-block: var(--space-xl);
+  }
+
+  .main > :global(.section:first-child) {
+    padding-top: 0;
+  }
+
+  .main :global(h2) {
+    margin-bottom: var(--space-lg);
+  }
+
+  /* A mono label heading sits closer to what it labels than a serif one does. */
+  .main :global(h2.eyebrow) {
+    margin-bottom: var(--space-sm);
+  }
+
+  /* The sidebar sits behind a hairline, not in a box — the system has no cards. */
+  .aside {
+    display: grid;
+    gap: var(--space-xl);
+    align-content: start;
+    padding-left: var(--space-lg);
+    border-left: var(--rule);
+  }
+
+  .aside :global(.eyebrow) {
+    margin-bottom: var(--space-sm);
+  }
+
+  /* The facts strip: the page's one tinted panel. */
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-xl);
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  .facts > span {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .back {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  /*
+   * Stacked: the metadata follows the prose, and the hairline moves from the side to the
+   * top — at full contrast, because here it separates two stacked blocks rather than
+   * running alongside one.
+   */
+  @media (max-width: 60rem) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .aside {
+      padding-left: 0;
+      padding-top: var(--space-md);
+      border-left: 0;
+      border-top: 1px solid var(--color-rule-strong);
+    }
+  }
+</style>

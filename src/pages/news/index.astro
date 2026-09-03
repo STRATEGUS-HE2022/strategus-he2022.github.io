@@ -1,0 +1,45 @@
+---
+import EmptyState from '../../components/EmptyState.astro';
+import NewsList from '../../components/NewsList.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getNews } from '../../lib/content.ts';
+import { site } from '../../data/site.ts';
+
+const news = await getNews();
+const byYear = new Map<number, typeof news>();
+for (const item of news) {
+  const year = item.data.date.getUTCFullYear();
+  const list = byYear.get(year);
+  if (list) list.push(item);
+  else byYear.set(year, [item]);
+}
+---
+
+<PageLayout title="News" eyebrow={site.shortName} description={`News from the ${site.shortName} project: papers, releases and events.`} bleed>
+  {news.length === 0 && (
+    <div class="band"><div class="section container"><EmptyState message="News items will be listed here." /></div></div>
+  )}
+  {/* One band per year, alternating tone: each year reads as its own plate. */}
+  {[...byYear.entries()].map(([year, items], index) => (
+    <div class:list={['band', index % 2 === 1 && 'band--sunken']}>
+      <section class="section container" aria-labelledby={`news-${year}`}>
+        <h2 id={`news-${year}`} class="year">{year}</h2>
+        <NewsList items={items} />
+      </section>
+    </div>
+  ))}
+</PageLayout>
+
+<style>
+  .section {
+    padding-block: var(--space-xl);
+  }
+
+  .year {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--color-ink-3);
+    margin-bottom: var(--space-md);
+  }
+</style>

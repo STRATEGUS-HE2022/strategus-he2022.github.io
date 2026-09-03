@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found" description="The requested page does not exist." noindex>
+  <div class="page-open container notfound">
+    <p class="eyebrow">Error 404</p>
+    <h1>Page not found</h1>
+    <p class="lede">The address you followed does not exist on this site. The sections below are where everything lives.</p>
+    <nav class="links" aria-label="Sections">
+      <a class="more" href="/">Home</a>
+      <a class="more" href="/news/">News</a>
+      <a class="more" href="/publications/">Publications</a>
+      <a class="more" href="/team/">Team</a>
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Padding and the title's size come from `.page-open` — this page is only an opening. */
+  .notfound {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md) var(--space-lg);
+    margin-top: var(--space-md);
+  }
+</style>

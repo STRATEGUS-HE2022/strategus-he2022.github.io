@@ -1,0 +1,207 @@
+---
+/** Site masthead and primary navigation. Works without JavaScript (plain links). */
+import markDark from '../assets/images/strategus-mark-dark.png';
+import markLight from '../assets/images/strategus-mark-light.png';
+import { site } from '../data/site.ts';
+
+const NAV = [
+  { href: '/', label: 'Home' },
+  { href: '/news/', label: 'News' },
+  { href: '/publications/', label: 'Publications' },
+  { href: '/team/', label: 'Team' },
+] as const;
+
+const first = Astro.url.pathname.split('/')[1];
+const current = first ? `/${first}/` : '/';
+---
+
+<header class="masthead">
+  <div class="container masthead__inner">
+    {/*
+      The mark carries no letters, so the acronym is set in type beside it. Both sit inside
+      the home link: a masthead mark is what people click to get home, and below 40rem the
+      expanded name is hidden, which would otherwise leave the link with only an image.
+    */}
+    <a class="wordmark" href="/" aria-label={`${site.shortName} — home`}>
+      <span class="masthead__brand-mark" aria-hidden="true">
+        <img class="masthead__brand-logo masthead__brand-logo--light" src={markLight.src} width={markLight.width} height={markLight.height} alt="" />
+        <img class="masthead__brand-logo masthead__brand-logo--dark" src={markDark.src} width={markDark.width} height={markDark.height} alt="" />
+      </span>
+      <span class="wordmark__short">{site.shortName}</span>
+      <span class="wordmark__long">{site.name}</span>
+    </a>
+    <div class="masthead__end">
+      <nav class="nav" aria-label="Main">
+        <ul class="nav__list">
+          {NAV.map((item) => (
+            <li>
+              <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {/*
+        Light/dark switch. Hidden until the inline script in BaseLayout.astro marks the
+        document as scripted, because without JavaScript the theme follows the operating
+        system and the button would do nothing. The half-filled disc reads as "change
+        appearance" in either theme, so no icon swapping is needed; the script keeps the
+        accessible name pointed at the action.
+      */}
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+          <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.4" />
+          <path d="M8 1.75a6.25 6.25 0 0 0 0 12.5Z" fill="currentColor" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .masthead {
+    border-bottom: 1px solid var(--color-rule-strong);
+    padding-block: var(--space-sm) var(--space-xs);
+  }
+
+  /*
+   * Two explicit rows, not one wrapping row: the mark and name on top, navigation and the
+   * theme toggle below. As a single flex row the navigation reflowed onto the wordmark
+   * line whenever the available width changed by a few pixels. The grid makes that
+   * impossible, and `scrollbar-gutter: stable` in base.css removes the width change too.
+   */
+  .masthead__inner {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .masthead__brand-mark {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+  }
+
+  .masthead__brand-logo {
+    flex: none;
+    width: auto;
+    height: 2.4rem;
+    object-fit: contain;
+  }
+
+  .masthead__brand-logo--dark {
+    display: none;
+  }
+
+  :global(:root[data-theme='dark']) .masthead__brand-logo--light {
+    display: none;
+  }
+
+  :global(:root[data-theme='dark']) .masthead__brand-logo--dark {
+    display: block;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .masthead__brand-logo--light {
+      display: none;
+    }
+
+    :global(:root:not([data-theme='light'])) .masthead__brand-logo--dark {
+      display: block;
+    }
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    min-width: 0;
+    text-decoration: none;
+  }
+
+  .wordmark:hover {
+    color: inherit;
+  }
+
+  .wordmark__short {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  .wordmark__long {
+    font-size: var(--text-sm);
+    color: var(--color-ink-3);
+  }
+
+  .wordmark__long::before {
+    content: '· ';
+  }
+
+  /* Row 2: navigation on the left, the theme toggle pushed to the right. */
+  .masthead__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-lg);
+  }
+
+  /* Only offered when the theme script is running — see BaseLayout.astro. */
+  .theme-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: var(--color-ink-3);
+    background: none;
+    border: var(--rule);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition-control);
+  }
+
+  :root[data-js] .theme-toggle {
+    display: inline-flex;
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: var(--color-paper-2);
+  }
+
+  .nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    list-style: none;
+    padding: 0;
+  }
+
+  .nav__list a {
+    display: inline-block;
+    padding-block: var(--space-2xs);
+    font-size: var(--text-sm);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav__list a:hover {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .nav__list a[aria-current='page'] {
+    border-bottom-color: var(--color-rule-strong);
+    font-weight: 600;
+  }
+
+  @media (max-width: 40rem) {
+    .wordmark__long {
+      display: none;
+    }
+  }
+</style>

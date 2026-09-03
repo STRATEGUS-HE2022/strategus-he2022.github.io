@@ -1,0 +1,17 @@
+---
+/** Quiet placeholder shown when a list has no entries yet. */
+interface Props {
+  message: string;
+}
+const { message } = Astro.props;
+---
+
+<p class="empty">{message}</p>
+
+<style>
+  .empty {
+    color: var(--color-ink-3);
+    font-style: italic;
+    padding-block: var(--space-md);
+  }
+</style>

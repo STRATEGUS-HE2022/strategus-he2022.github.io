@@ -1,0 +1,32 @@
+{
+  "name": "strategus-he2022.github.io",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Static website of STRATEGUS (STRATEgic GUide to Smart manufacturing), a Marie Skłodowska-Curie Global Fellowship at the University of Verona and UNC Chapel Hill",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "node --test tests/*.test.mjs",
+    "verify": "node scripts/verify.mjs",
+    "strip-metadata": "node scripts/strip-image-metadata.mjs",
+    "ci": "npm run check && npm test && npm run build && npm run verify"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-serif": "^5.3.0",
+    "astro": "^7.2.7",
+    "sharp": "^0.35.4",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3"
+  }
+}
