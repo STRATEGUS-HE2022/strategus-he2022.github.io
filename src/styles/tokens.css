@@ -69,8 +69,13 @@
   --rule: 1px solid var(--color-rule);
   --radius: 2px;
 
-  /* One duration, one easing. No transforms, no bounce, no reveal-on-scroll. */
+  /*
+   * One duration, one easing. No transforms, no bounce, no reveal-on-scroll. The single
+   * exception is --duration-theme: switching theme repaints every surface at once, and at
+   * 120ms that reads as a flash, so the toggle cross-fades over half a second instead.
+   */
   --duration: 120ms;
+  --duration-theme: 500ms;
   --ease: ease;
   --transition-link: color var(--duration) var(--ease), text-decoration-color var(--duration) var(--ease);
   --transition-control: color var(--duration) var(--ease), border-color var(--duration) var(--ease), background-color var(--duration) var(--ease);
@@ -97,23 +102,25 @@
   --light-focus: #b8310a;
 
   /*
-   * ---- Palette: dark — a lit navy ground, near-white ink, lifted flame accents ----
+   * ---- Palette: dark — near-black paper, grey plates, neutral ink, flame accents ----
    *
-   * The ground is a navy rather than a black so the site still reads as the same
-   * object in both themes. The accent is the flame lifted towards white: 6.8:1 on
-   * paper, 5.6:1 on paper-2, 6.0:1 on the tint. Ink on paper is 12.5:1.
+   * The dark theme is neutral on purpose: a coloured ground competes with the flame, so
+   * the paper is a warm-free near-black and the sunken bands and the footer are one grey
+   * step lighter. Ink on paper is 16.3:1, --dark-ink-3 is 5.8:1 on --dark-paper-2. The
+   * accent is the flame lifted towards white and kept a little more saturated than on the
+   * light theme: 8.1:1 on paper, 7.3:1 on paper-2 and on the tint.
    */
-  --dark-paper: #1a2b56;
-  --dark-paper-2: #253865;
-  --dark-selection: #6a3a2c;
-  --dark-ink: #eff4ff;
-  --dark-ink-2: #becef0;
-  --dark-ink-3: #97aad1;
-  --dark-rule: #344878;
-  --dark-rule-strong: #d5dff3;
-  --dark-accent: #ff9d73;
-  --dark-accent-strong: #ffcdb8;
-  --dark-focus: #ff9d73;
+  --dark-paper: #151515;
+  --dark-paper-2: #202020;
+  --dark-selection: #4a2a1c;
+  --dark-ink: #f2f2f2;
+  --dark-ink-2: #c4c4c4;
+  --dark-ink-3: #9a9a9a;
+  --dark-rule: #2e2e2e;
+  --dark-rule-strong: #d9d9d9;
+  --dark-accent: #ff8f5e;
+  --dark-accent-strong: #ffc4ab;
+  --dark-focus: #ff8f5e;
 
   /*
    * The mark's own colours, sampled from it. These are BRAND-ONLY: the interface uses

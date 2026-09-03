@@ -84,6 +84,14 @@ The mark is a transparent PNG derived from the original JPEG. The dark theme use
 variant whose navy arcs are set in the dark ink colour so they stay visible on navy paper;
 the flame is untouched. The EU emblem is never recoloured; it sits on a white plate.
 
+### Revision, 2026-09-03 (later the same day)
+
+The navy dark theme was rejected. The dark palette is now neutral: paper `#151515`, plates
+`#202020`, ink `#f2f2f2` / `#c4c4c4` / `#9a9a9a`, rules `#2e2e2e` / `#d9d9d9`, accent
+`#ff8f5e` / `#ffc4ab`, selection `#4a2a1c`. The dark mark's arcs follow the new ink. The
+theme toggle cross-fades over 500 ms (`--duration-theme`, skipped under reduced motion), and
+switching from dark to light shows a "Flash out!" frame under the toggle for 1.5 s.
+
 ## Guardrails
 
 - `npm run ci` = `astro check` → unit tests → build → `scripts/verify.mjs`.

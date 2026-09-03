@@ -460,6 +460,25 @@ main > .band:first-child > .container {
   border-bottom: var(--rule);
 }
 
+/* --- Theme switch ----------------------------------------------------------
+ * Switching theme repaints every surface at once, and at --duration that reads as a
+ * flash. The toggle script puts `theme-transition` on <html> for one --duration-theme
+ * and removes it again, so the two palettes cross-fade. The class is never present at
+ * load — pages still paint their theme instantly — and the script skips it when the
+ * visitor asks for reduced motion.
+ */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color var(--duration-theme) var(--ease),
+    color var(--duration-theme) var(--ease),
+    border-color var(--duration-theme) var(--ease),
+    fill var(--duration-theme) var(--ease),
+    stroke var(--duration-theme) var(--ease) !important;
+}
+
 /* --- Motion ---------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {

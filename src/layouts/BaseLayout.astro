@@ -74,10 +74,40 @@ const { title, description, type, image, noindex } = Astro.props;
           button.setAttribute('title', `Switch to the ${next} theme`);
         };
 
+        /*
+         * Cross-fade the switch: `theme-transition` on <html> for one --duration-theme (see
+         * base.css). Never at load, and never for visitors who asked for reduced motion.
+         */
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let transitionTimer;
+        const crossfade = () => {
+          if (reduced.matches) return;
+          root.classList.add('theme-transition');
+          clearTimeout(transitionTimer);
+          transitionTimer = setTimeout(() => root.classList.remove('theme-transition'), 600);
+        };
+
+        /* Dark to light is a flashbang even when it fades. Say so, briefly, under the toggle. */
+        let flashTimer;
+        const flash = () => {
+          const frame = document.querySelector('[data-theme-flash]');
+          if (!frame) return;
+          frame.textContent = 'Flash out!';
+          frame.classList.add('is-visible');
+          clearTimeout(flashTimer);
+          flashTimer = setTimeout(() => {
+            frame.classList.remove('is-visible');
+            frame.textContent = '';
+          }, 1500);
+        };
+
         document.addEventListener('click', (event) => {
           const button = event.target.closest('[data-theme-toggle]');
           if (!button) return;
-          const next = (root.dataset.theme ?? system()) === 'dark' ? 'light' : 'dark';
+          const current = root.dataset.theme ?? system();
+          const next = current === 'dark' ? 'light' : 'dark';
+          crossfade();
+          if (current === 'dark') flash();
           try {
             // Choosing your own system preference clears the override again.
             if (next === system()) {

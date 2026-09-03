@@ -57,19 +57,20 @@ Only layer 3 is switched. Components read layer 3 and never mention layer 1 or 2
 
 | Active token | Light | Dark | Used for |
 | --- | --- | --- | --- |
-| `--color-paper` | `#f6f7fb` | `#1a2b56` | Page background, `.band` |
-| `--color-paper-2` | `#eaecf5` | `#253865` | Sunken bands, code, footer |
-| `--color-ink` | `#141a2e` | `#eff4ff` | Body text and headings |
-| `--color-ink-2` | `#3b4468` | `#becef0` | Ledes, summaries |
-| `--color-ink-3` | `#5a6383` | `#97aad1` | Eyebrows, meta, captions |
-| `--color-rule` | `#d3d8e8` | `#344878` | Hairline separators |
-| `--color-rule-strong` | `#141a2e` | `#d5dff3` | Masthead and footer edges, current nav item |
-| `--color-accent` | `#b8310a` | `#ff9d73` | Link hover, categories, partner roles, filter focus |
-| `--color-accent-strong` | `#872406` | `#ffcdb8` | Selected text |
-| `--color-focus` | `#b8310a` | `#ff9d73` | Focus ring |
-| `--color-selection` | `#fbe3d9` | `#6a3a2c` | `::selection` background |
+| `--color-paper` | `#f6f7fb` | `#151515` | Page background, `.band` |
+| `--color-paper-2` | `#eaecf5` | `#202020` | Sunken bands, code, footer |
+| `--color-ink` | `#141a2e` | `#f2f2f2` | Body text and headings |
+| `--color-ink-2` | `#3b4468` | `#c4c4c4` | Ledes, summaries |
+| `--color-ink-3` | `#5a6383` | `#9a9a9a` | Eyebrows, meta, captions |
+| `--color-rule` | `#d3d8e8` | `#2e2e2e` | Hairline separators |
+| `--color-rule-strong` | `#141a2e` | `#d9d9d9` | Masthead and footer edges, current nav item |
+| `--color-accent` | `#b8310a` | `#ff8f5e` | Link hover, categories, partner roles, filter focus |
+| `--color-accent-strong` | `#872406` | `#ffc4ab` | Selected text, the flash frame |
+| `--color-focus` | `#b8310a` | `#ff8f5e` | Focus ring |
+| `--color-selection` | `#fbe3d9` | `#4a2a1c` | `::selection` background |
 
-The accent is the flame of the mark, darkened (light) or lifted (dark) until it clears
+Light is a cool off-white paper with navy ink; dark is a neutral near-black paper with grey
+plates and neutral ink, so nothing competes with the flame. The accent is the flame of the mark, darkened (light) or lifted (dark) until it clears
 4.5:1 as text on `--color-paper`, `--color-paper-2` and the 7 % tint. The mark's real colours
 are recorded as `--brand-navy` and `--brand-flame` and are never used as text.
 
@@ -84,6 +85,15 @@ are recorded as `--brand-navy` and `--brand-flame` and are never used as text.
 The inline script that applies step 2 lives in the `<head>` of `BaseLayout.astro` and runs
 before first paint, so pages never flash the wrong palette.
 
+**The switch cross-fades.** Repainting every surface at once reads as a flash, so the script
+puts `theme-transition` on `<html>` for `--duration-theme` (500 ms) and removes it again;
+`base.css` transitions background, text, border and icon colours while the class is present.
+It is never present at load, and the script skips it for visitors who prefer reduced motion.
+
+**Dark to light says "Flash out!".** For a second and a half a small frame under the toggle
+carries that text (the `.theme-flash` element in `Header.astro`, filled by the script and
+announced through `role="status"`). It is the site's one joke; light to dark stays silent.
+
 ### Changing the palette safely
 
 1. Edit `--light-*` and `--dark-*` only. Never touch the `--color-*` aliases and never put a
@@ -93,7 +103,8 @@ before first paint, so pages never flash the wrong palette.
    least 7:1 for `--color-ink`, 4.5:1 for `--color-ink-2`, `--color-ink-3`, `--color-accent`
    and `--color-accent-strong`, 3:1 for `--color-focus` and `--color-rule-strong`.
 4. Look at both themes: a text-heavy page (`/`), a list-heavy one (`/publications/`) and the
-   Team page.
+   Team page. Regenerate the dark mark if `--dark-ink` changes: its arcs are painted in that
+   colour (see `THIRD_PARTY_NOTICES.md` § The STRATEGUS mark).
 
 ## What not to do
 

@@ -53,6 +53,12 @@ const current = first ? `/${first}/` : '/';
           <path d="M8 1.75a6.25 6.25 0 0 0 0 12.5Z" fill="currentColor" />
         </svg>
       </button>
+      {/*
+        The one joke in the system. Going from dark to light is a flashbang even with the
+        cross-fade, so the script announces it: this frame gets its text and `is-visible`
+        for a second and a half, anchored under the toggle. Empty and invisible otherwise.
+      */}
+      <p class="theme-flash" data-theme-flash role="status" aria-live="polite"></p>
     </div>
   </div>
 </header>
@@ -137,13 +143,41 @@ const current = first ? `/${first}/` : '/';
     content: '· ';
   }
 
-  /* Row 2: navigation on the left, the theme toggle pushed to the right. */
+  /* Row 2: navigation on the left, the theme toggle pushed to the right. Positioned so
+     the flash frame can hang under the toggle. */
   .masthead__end {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-xs) var(--space-lg);
+  }
+
+  .theme-flash {
+    position: absolute;
+    top: calc(100% + var(--space-xs));
+    right: 0;
+    z-index: 10;
+    padding: var(--space-xs) var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent-strong);
+    background: var(--color-tint-strong);
+    border: var(--rule-accent);
+    border-radius: var(--radius);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--duration) var(--ease), visibility var(--duration) var(--ease);
+  }
+
+  .theme-flash.is-visible {
+    opacity: 1;
+    visibility: visible;
   }
 
   /* Only offered when the theme script is running — see BaseLayout.astro. */

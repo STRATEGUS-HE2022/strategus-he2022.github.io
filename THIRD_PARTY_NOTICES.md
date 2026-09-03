@@ -12,8 +12,8 @@ not take — add its entry here first.
 ## The STRATEGUS mark
 
 `src/assets/images/strategus-mark-light.png` and `strategus-mark-dark.png` are the project's
-own mark. The dark-theme variant repaints the navy arcs so they stay visible on navy paper;
-the flame is untouched. `public/favicon.ico` is derived from the same mark.
+own mark. The dark-theme variant repaints the navy arcs in the dark theme's ink colour so
+they stay visible on the near-black paper; the flame is untouched. `public/favicon.ico` is derived from the same mark.
 
 ## The European Union emblem
 
