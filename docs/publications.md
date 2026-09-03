@@ -79,6 +79,41 @@ Everything the bibliography cannot express. The key is the exact BibTeX key:
 Every field is optional. An unknown key fails the tests, which catches a typo in a citation
 key. Only link a PDF the publisher's licence allows you to host.
 
+## Finding papers to add
+
+`scripts/suggest-publications.py` looks up a team member's publications on Google Scholar
+(or on OpenAlex, through their ORCID), compares them with `publications.bib`, and prints the
+ones that are missing. **It never modifies a file**: it is a reminder, not an importer.
+
+Setup, once — a Python virtual environment, git-ignored:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r scripts/requirements.txt
+```
+
+Then:
+
+```bash
+.venv/bin/python scripts/suggest-publications.py                     # Google Scholar, since the project start
+.venv/bin/python scripts/suggest-publications.py --source openalex   # OpenAlex by ORCID: reliable, no scraping
+.venv/bin/python scripts/suggest-publications.py --bibtex            # a draft BibTeX entry per suggestion
+.venv/bin/python scripts/suggest-publications.py --person franco-fummi --since 2024
+.venv/bin/python scripts/suggest-publications.py --help
+```
+
+The report lists what was found, what is already in the bibliography, the suggested
+additions (newest first, with DOI and venue when the source has them) and, at the end, the
+entries of the bibliography the source did not return. Preprints whose published version
+was also found are hidden; `--include-superseded` shows them.
+
+The Scholar and ORCID ids come from the person's record in `src/content/people/`, so the
+tool works for anyone on the Team page who has them. Google Scholar has no API and blocks
+scrapers without warning; when it fails, the script says so — retry later or use OpenAlex.
+
+Drafted BibTeX entries are a starting point: check them against the publisher's record,
+add the open-access `url`, and run `npm run ci`.
+
 ## Validate
 
 ```bash

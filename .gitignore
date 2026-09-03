@@ -20,3 +20,8 @@ Thumbs.db
 
 # Local tooling
 .claude/settings.local.json
+
+# Python virtual environment of scripts/suggest-publications.py
+.venv/
+__pycache__/
+*.py[cod]

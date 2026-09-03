@@ -14,7 +14,7 @@ the site says. Find your task, open the guide, follow it.
 | I want to… | Read |
 | --- | --- |
 | Add news | [docs/news.md](docs/news.md) |
-| Add a publication | [docs/publications.md](docs/publications.md) |
+| Add a publication, or find papers missing from the list | [docs/publications.md](docs/publications.md) |
 | Edit a team member or a portrait | [docs/team.md](docs/team.md) |
 | Change the project description, funding statement, partners, colours | [docs/site-settings.md](docs/site-settings.md) |
 | Preview or deploy | [docs/deployment.md](docs/deployment.md) |
@@ -73,7 +73,8 @@ src/styles/                tokens.css (design tokens) + base.css (global styles)
 src/lib/                   plain TypeScript helpers (BibTeX, publications, people)
 src/loaders/publications.ts   turns publications.bib into a collection
 public/                    copied verbatim: favicon, .nojekyll
-scripts/                   verify.mjs (CI quality gate), strip-image-metadata.mjs
+scripts/                   verify.mjs (CI quality gate), strip-image-metadata.mjs,
+                           suggest-publications.py (maintainer tool, Python, see docs/publications.md)
 tests/                     unit tests and content invariants (node --test)
 docs/                      the task guides linked above
 ```

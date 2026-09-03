@@ -11,7 +11,8 @@ University of Verona and UNC Chapel Hill.
 
 - Astro builds Markdown and BibTeX into static HTML, CSS and optimised images.
 - There is **no backend, no database, no CMS, no login, no runtime Python**. Nothing on
-  the deployed site executes on a server, and the site makes no third-party request.
+  the deployed site executes on a server, and the site makes no third-party request. The
+  one Python file, `scripts/suggest-publications.py`, is a maintainer tool that only prints.
 - The site is deployed to GitHub Pages from `main`. `dist/` is generated, never edited.
 
 ## Principles
@@ -91,6 +92,7 @@ and no page nests a `.container`.
 | `src/lib/`, `src/loaders/` | Plain TypeScript helpers (BibTeX, publications, people) |
 | `public/` | Files copied verbatim into the build |
 | `scripts/verify.mjs` | Repository and built-site verification, run by CI |
+| `scripts/suggest-publications.py` | Maintainer tool: compares Scholar/OpenAlex with the bibliography and prints what is missing. Never writes |
 | `tests/` | Unit tests and content invariants (`node --test`) |
 | `THIRD_PARTY_NOTICES.md` | Provenance and licences of third-party material. Add an entry before adding an asset you did not make |
 

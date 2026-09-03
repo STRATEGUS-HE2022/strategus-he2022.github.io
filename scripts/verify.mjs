@@ -42,7 +42,7 @@ for (const file of tracked) {
     if (size > MAX_FILE_BYTES) fail(`tracked file is too large (${Math.round(size / 1024)} KB > ${MAX_FILE_BYTES / 1024} KB): ${file}`);
   }
 }
-const IGNORED_DIRS = new Set(['node_modules', '.git', 'dist', '.astro']);
+const IGNORED_DIRS = new Set(['node_modules', '.git', 'dist', '.astro', '.venv']);
 function walk(dir, visit) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (IGNORED_DIRS.has(entry.name)) continue;
